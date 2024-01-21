@@ -6,6 +6,7 @@ import QtQuick 2.3
 
 import QtGraphicalEffects 1.12
 import FileIO 1.0
+
 Item {
 
 
@@ -402,10 +403,20 @@ Item {
         width: 47
         height: 21
         x: 481
-        y: 428
+        y: 407
         source: if(!root.sidelight) './img/Lite_mph.png'; else './img/Dark_mph.png'
         visible: root.speedunits === 1 
     }
+    // Image{
+    //     id: mi_label
+    //     z: 7
+    //     x: 481
+    //     y: 407
+    //     width: 24
+    //     height: 18
+    //     source: if(!root.sidelight) './img/lite_mi.png'; else './img/dark_mi.png'
+    //     visible: root.speedunits === 1 
+    // }
     Image{
         id: kmh_label
         z: 7
@@ -416,6 +427,17 @@ Item {
         source: if(!root.sidelight) './img/Lite_kmh.png'; else './img/Dark_kmh.png'
         visible: root.speedunits === 0
     }
+    // Image{
+    //     id: km_label
+    //     z: 7
+    //     x: 501
+    //     y: 408
+    //     width: 27
+    //     height: 18
+    //     source: if(!root.sidelight) './img/lite_km.png'; else './img/dark_km.png'
+    //     visible: root.speedunits === 0
+    // }
+    
      Text {
         id: odometer_display_val
         text: if (root.speedunits === 0)
@@ -676,7 +698,7 @@ Item {
         id: oiltemp_label
         x: 738
         y: 339
-        z:3
+        z: 3
         width: 42
         height: 34
         source: if(!root.sidelight) './img/LightOilTemp.png';else './img/DarkOilTemp.png'
@@ -727,10 +749,10 @@ Item {
         //          else
         //              true
     }
-    Text{
-        id: tps_display_val
-        text: root.
-    }
+    // Text{
+    //     id: tps_display_val
+    //     text: root.
+    // }
     DropShadow{
         z:2
         anchors.fill: battery_display_val
