@@ -2,9 +2,9 @@
 import QtQuick 2.3
 
 //import Qt3D 1.0
-import QtGraphicalEffects 1.0
+//import QtGraphicalEffects 1.0
 
-//import QtGraphicalEffects 1.12
+import QtGraphicalEffects 1.12
 import FileIO 1.0
 Item {
 
@@ -61,8 +61,9 @@ Item {
     property bool left_joystick: inputs & 0x20000000 || root.udp_left
     property bool right_joystick: inputs & 0x40000000 || root.udp_right
 
-    property int odometer: rpmtest.odometer0data/10*0.62 //Need to div by 10 to get 6 digits with leading 0
-    property int tripmeter: rpmtest.tripmileage0data*0.62
+    property int odometer: rpmtest.odometer0data / 10
+                           * 0.62 //Need to div by 10 to get 6 digits with leading 0
+    property int tripmeter: rpmtest.tripmileage0data * 0.62
     property real value: 0
     property real shiftvalue: 0
 
@@ -74,7 +75,7 @@ Item {
     property int speedunits: 2
 
     property real watertemp: rpmtest.watertempdata
-    property real waterhigh: 0
+    property real waterhigh: 100
     property real waterlow: 80
     property real waterunits: 1
 
@@ -123,7 +124,6 @@ Item {
                                     "0" + blue.toString(16)
                                 else
                                     blue.toString(16)
-
     //  onColorschemeChanged: console.log("color scheme is "+colorscheme)
     //property real masterbrightness:fuel/100
 
@@ -174,8 +174,9 @@ Item {
 
     //Tristan Generated Code Here:
     property string white_color: "#FFFFFF"
-    property string primary_color: "#FFFFFF"; //#FFBF00 for amber
-    property string night_light_color: "#9c7200"
+    property string primary_color: "#FFFFFF" //#FFBF00 for amber
+    property string daylight_lcd_color: "#000000" //Daylight LCD should be black (tbd)
+    property string night_light_color: "#CDFFBE" //Pale Green for LCD
     property string sweetspot_color: "#FFA500" //Cam Changeover Rev colpr
     property string warning_red: "#FF0000" //Redline/Warning colors
     property string engine_warmup_color: "#eb7500"
@@ -185,10 +186,9 @@ Item {
 
     //Fonts
     FontLoader {
-        id: helvetica_black_oblique
-        source: "./HelveticaBlackOB.ttf"
+        id: digital7monoitalic
+        source: "./fonts/digital7monoitalic.ttf"
     }
-
 
     /* ########################################################################## */
     /* Main Layout items */
@@ -201,57 +201,394 @@ Item {
         color: root.background_color
         border.width: 0
         z: 0
+        Text{
+            z: 8
+            
+            color: '#FFFFFF'
+        }
     }
-//    Item{
-//        id: guides
-//        Rectangle{
-//            id: centerline
-//            width: 1
-//            height: 480
-//            color: "#FFFF00"
-//            x: 400
-
-//        }
-//        Rectangle{
-//            id: gasline
-//            width: 800
-//            height: 1
-//            color: "#FFFF00"
-//            x: 0
-//            y: 427
-//        }
-
-//    }
-
-    Rectangle {
-        id: rev_splitter
-        y: 256
+    Item {
+        id: background_gradient
+        z: 0
         x: 0
+        y: 0
+        Image {
+            source: './img/bkg.png'
+            width: 800
+            height: 480
+        }
+    }
+    Item {
+        id: side_items
+        y: 266.7
+        x: 544
+        z: 1
+        Image {
+            source: './img/RightDashOutside.png'
+            width: 250
+            height: 208
+        }
+    }
+    Item{
+        id: side_lcd
+        y: 277
+        x: 560.7
         z: 2
-        width: 800
-        height: 2
-        color: if(!root.sidelight) root.primary_color; else root.night_light_color
+        Image {
+            source: if(!root.sidelight) './img/LightFurtherInfo.png'; else './img/DarkFurtherInfo.png'
+            width: 222.1
+            height: 182
+        }
+    }
+
+    Item {
+        id: centerpiece
+        y: 245.5
+        x: 245
+        z: 3
+        Image {
+            source: './img/CenterPiece.png'
+            width: 313
+            height: 230
+        }
+    }
+
+    Item {
+        id: warning_lights
+        x: 635
+        y: 40
+        Image {
+            source: './img/warninglightholster.png'
+            width: 152
+            height: 208
+            z: 1
+        }
+        Image{
+            source: './img/door_warning.png'
+            width: 67
+            height: 32
+            z:2
+            x: 5
+            y: 5
+            visible: root.doorswitch
+        }
+        Image{
+            source: './img/ebrake_warning.png'
+            width: 67
+            height: 32
+            z:2
+            x: 80
+            y: 5
+            visible: root.brake
+        }
+        Image{
+            source: './img/seatbelt_warning.png'
+            width: 67
+            height: 32
+            z:2
+            x: 5
+            y: 42
+            visible: root.seatbelt
+        }
+        Image{
+            source: './img/abs_warning.png'
+            width: 67
+            height: 32
+            z:2
+            x: 80
+            y: 42
+            visible: root.abs
+        }
+        Image{
+            source: './img/battery_warning.png'
+            width: 67
+            height: 32
+            z:2
+            x: 5
+            y: 79
+            visible: root.battery
+        }
+        // TPS??
+        // Image{
+        //     source: './img/tps_warning.png'
+        //     width: 67
+        //     height: 32
+        //     z:2
+        //     x: 80
+        //     y: 79
+        //     visible: root.tps
+        // }
+        Image{
+            source: './img/oil_warning.png'
+            width: 67
+            height: 32
+            z:2
+            x: 5
+            y: 116
+            visible: root.oil
+        }
+        Image{
+            source: './img/engine_warning.png'
+            width: 67
+            height: 32
+            z:2
+            x: 80
+            y: 116
+            visible: root.mil
+        }
+        Image{
+            source: './img/oil_warning.png'
+            width: 67
+            height: 32
+            z:2
+            x: 5
+            y: 116
+            visible: root.oil
+        }
+        Image{
+            source: './img/engine_warning.png'
+            width: 67
+            height: 32
+            z:2
+            x: 80
+            y: 116
+            visible: root.mil
+        }
+    }
+
+    Item{
+        id: mph_display
+        y: 371
+        x: 261.6
+        z: 4
+        Image { 
+            source: if(!root.sidelight) './img/LightMPHDisplay.png'; else './img/DarkMPHDisplay.png'
+        }
     }
 
     Text {
-        id: rpm_display_val
-        text: root.rpm + " rpm"
-        font.pixelSize: 32
+        id: speed_display_val
+        font.pixelSize: 90
         horizontalAlignment: Text.AlignRight
-        font.pointSize: 32
-        font.family: helvetica_black_oblique.name
-        x: 608
-        y: 203
-        z: 2
-        width: 174
-        opacity: 100
-        color: if (root.rpm < 8000)
-                   if(!root.sidelight) root.primary_color; else root.night_light_color
+        font.family: digital7monoitalic.name
+        font.pointSize: 90
+        x: 328
+        y: 370
+        width: 134
+        height: 75.7
+        z: 8
+        color: if (!root.sidelight)
+                   root.daylight_lcd_color
                else
-                   root.warning_red
+                   root.night_light_color
+        text: if (root.speedunits === 0) {
+                  root.speed.toFixed(0) //"0"   // Alec added speed
+              } else {
+                  root.mph.toFixed(0)
+              }
+    }
+    DropShadow{
+        z:7
+       anchors.fill: speed_display_val
+        source:speed_display_val
+       verticalOffset: 3
+       radius: 3.0
+       samples: 9
+       color: '#44000000'
+    }
+    Image{
+        id: mph_label
+        z: 7
+        width: 47
+        height: 21
+        x: 481
+        y: 428
+        source: if(!root.sidelight) './img/Lite_mph.png'; else './img/Dark_mph.png'
+        visible: root.speedunits === 1 
+    }
+    Image{
+        id: kmh_label
+        z: 7
+        width: 47
+        height: 21
+        x: 481
+        y: 428
+        source: if(!root.sidelight) './img/Lite_kmh.png'; else './img/Dark_kmh.png'
+        visible: root.speedunits === 0
+    }
+     Text {
+        id: odometer_display_val
+        text: if (root.speedunits === 0)
+                  root.odometer 
+              else if (root.speedunits === 1)
+                  root.odometer
+              else
+                  root.odometer
+        font.pixelSize: 18
+        horizontalAlignment: Text.AlignRight
+        font.pointSize: 18
+        font.family: digital7monoitalic.name
+        x: 463
+        y: 384 //480 - 16 - 12
+        z: 8
+        width: 62
+        color: if (!root.sidelight)
+                   root.daylight_lcd_color
+               else
+                   root.night_light_color
+    }
+    Item {
+        id: watertemp_bezel
+        x: 30
+        y: 288
+        z: 1
+        Image{
+            source: './img/WaterTempRingBack.png'
+            height: 187
+            width: 187
+        }
+    }
+
+    Item { 
+        id: watertemp_gaugeface
+        x: 42
+        y: 299
+        z: 2
+        Image{
+            height: 161
+            width: 161
+            source: if(!root.sidelight) './img/LightWaterTempFace.png'; else './img/DarkWaterTempFace.png'
+        }
+    }
+    Item {
+        id: watertemp_needle
+        z: 4
+        x: 49
+        y: 373
+        Image{
+            height: 12
+            width: 85
+            source: './img/WaterTempNeedle'
+            transform:
+                Rotation {
+                    id: watertemp_rotate
+                    origin.y: 6
+                    origin.x: 76
+                     //Minimum angle on horizontal needlie is negative 90 for straight down, water temp needs offset of 60 degrees, 
+                     //270/60 = 4.5 for angle ratio, max rotation for that horizontal pointing left arrow is 180
+                    angle:Math.min(Math.max(-90, ((root.watertemp - 60) * 4.5) - 90), 180)
+                    } 
+                }
+        }
+    Item{
+        id: watertemp_warning
+        z: 4
+        x: 145
+        y: 400
+        Image{
+            height: 28
+            width: 28
+            source: if(root.watertemp < root.waterhigh) './img/warninglightdim.png'; else './img/warninglightlit.png'
+        }
+    }
+    Item {
+        id: tachometer_back
+        z: 2
+        x: 171.4
+        y: 12
+        Image{
+            height: 456
+            width: 457
+            source: if(!root.sidelight) './img/LightTachFace.png'; else './img/DarkTachFace.png'
+        }
+    }
+    Item{
+        id: tachometer_needle
+        z: 4
+        x: 194
+        y: 236
+        Image{
+            height: 14
+            width: 239
+            source: './img/TachNeedle.png'
+            transform:
+                Rotation {
+                    id: tachneedle_rotate
+                    origin.y: 6
+                    origin.x: 205
+                    angle: Math.min(Math.max(-28.5, Math.round((root.rpm/1000)*24) - 30), 212.5)                
+                }
+        }
+    }
+    
+    Item{
+        id: shift_lights_dim
+        z: 3
+        x: 326
+        y: 170
+        width: 140
+        height: 19
+        Image{
+            x: 0
+            y: 0
+            height: 19
+            width: 46
+            source:'./img/ShiftLightDimmed.png'
+        }
+        Image{
+            x: 51
+            y: 0
+            height: 19
+            width: 46
+            source: './img/ShiftLightDimmed.png'
+        }
+        Image{
+            x: 102
+            y: 0
+            height: 19
+            width: 46
+            source: './img/ShiftLightDimmed.png'
+        }
+    }
+    Item{
+        id: shift_lights
+        z: 3
+        x: 326
+        y: 170
+        width: 140
+        height: 19
+        Image{
+            x: 0
+            y: 0
+            height: 19
+            width: 46
+            source:'./img/ShiftLightLit.png'
+            visible: if(root.rpm > 7500) true; else false
+            opacity: if(root.rpm < 8200) 100
+        }
+        Image{
+            x: 51
+            y: 0
+            height: 19
+            width: 46
+            source:'./img/ShiftLightLit.png'
+            visible: if(root.rpm > 7750) true; else false
+            opacity: if(root.rpm < 8200) 100
+
+        }
+        Image{
+            x: 102
+            y: 0
+            height: 19
+            width: 46
+            source:'./img/ShiftLightLit.png'
+            visible: if(root.rpm > 8000) true; else false
+            opacity: if(root.rpm < 8200) 100
+
+        }
         Timer{
             id: rpm_shift_blink
-            running: if(root.rpm >= 8000)
+            running: if(root.rpm >= 8200)
                         true
                     else
                         false
@@ -265,607 +602,163 @@ Item {
             } 
         }
     }
-
-    Text {
-        id: watertemp_display_val
-        text: root.watertemp.toFixed(
-                  0) + "°" // Alec added toFixed(0) to have no decimal places
-        font.pixelSize: 32
-        font.pointSize: 32
-        font.family: helvetica_black_oblique.name
-        width: 128
-        height: 32
-        x: 36
-        y: 396
-        z: 2
-        color: if (root.watertemp < root.waterlow)
-                    root.engine_warmup_color
-                else if (root.watertemp > root.waterlow && root.watertemp < root.waterhigh)
-                   if(!root.sidelight) root.primary_color; else root.night_light_color
-               else
-                   root.warning_red
-    }
-
     Text {
         id: oiltemp_display_val
         font.pixelSize: 32
         font.pointSize: 32
-        font.family: helvetica_black_oblique.name
-        width: 128
-        height: 32
-        x: 36
-        y: 338
+        font.family: digital7monoitalic.name
+        width: 110
+        height: 36
+        x: 626.3
+        y: 334
         z: 2
-        color: if (root.oiltemp < root.oiltemphigh)
-                   if(!root.sidelight) root.primary_color; else root.night_light_color
+        color: if (!root.sidelight)
+                   root.daylight_lcd_color
                else
-                   root.warning_red
-        text: root.oiltemp.toFixed(0) + "°" // "100°"
-        visible: if(root.oiltemphigh === 0)false; else true
-    }
+                   root.night_light_color
+        text: root.oiltemp.toFixed(0) + "C" // "100C"
+        horizontalAlignment: Text.AlignRight
 
+        // visible: if (root.oiltemphigh === 0)
+        //              false
+        //          else
+        //              true
+    }
+    DropShadow{
+        z:2
+       anchors.fill: oiltemp_display_val
+        source: oiltemp_display_val
+       verticalOffset: 3
+       radius: 3.0
+       samples: 9
+       color: '#44000000'
+    }
     Text {
         id: oilpressure_display_val
-        text: root.oilpressure.toFixed(0) //Alec added toFixed(0)
-        font.pixelSize: 32
-        font.pointSize: 32
-        font.family: helvetica_black_oblique.name
-        width: 128
+        text: root.oilpressure.toFixed(1)
+        font.pixelSize: 36
+        font.pointSize: 36
+        font.family: digital7monoitalic.name
+        horizontalAlignment: Text.AlignRight
+        width: 110
+        height: 36
+        x: 626.3
+        y: 285
+        z: 2
+        color: if (!root.sidelight)
+                   root.daylight_lcd_color
+               else
+                   root.night_light_color
+        // visible: if (root.oilpressurehigh === 0)
+        //              false
+        //          else
+        //              true
+    }
+    DropShadow{
+        z:2
+       anchors.fill: oilpressure_display_val
+        source: oilpressure_display_val
+       verticalOffset: 3
+       radius: 3.0
+       samples: 9
+       color: '#44000000'
+    }
+    Image{
+        id: oilpressure_label
+        x: 738
+        y: 290
+        z:3
+        width: 45
         height: 32
-        x: 36
-        y: 284
-        z: 2
-        color: if(!root.sidelight) root.primary_color; else root.night_light_color
-        visible: if(root.oilpressurehigh === 0)false; else true
+        source: if(!root.sidelight) './img/LightOilPressure.png';else './img/DarkOilPressure.png'
     }
-    Rectangle {
-        id: oilpressure_line
-        x: 16
-        y: 327
-        width: 256
-        height: 2
-        color: if(!root.sidelight) root.primary_color; else root.night_light_color
-        visible: if(root.oilpressurehigh === 0)false; else true
-
+    Image{
+        id: oiltemp_label
+        x: 738
+        y: 339
+        z:3
+        width: 42
+        height: 34
+        source: if(!root.sidelight) './img/LightOilTemp.png';else './img/DarkOilTemp.png'
     }
-
+    Image{
+        id: volts_label
+        x: 738
+        y: 395
+        z:3
+        width: 39
+        height: 17
+        source: if(!root.sidelight) './img/LightVolts.png';else './img/DarkVolts.png'
+    }
+    // Need TPS value for this to be enabled
+    // Image{
+    //     id: tps_label
+    //     x: 680
+    //     y:395
+    //     source: if(!root.sidelight) './img/lite_tps.png';else './img/dark_tps.png'
+    // }
+    Image{
+        id: gas_label
+        x: 745
+        y: 423
+        z:3
+        width: 35
+        height: 32
+        source: if(!root.sidelight) './img/LightGasIcon.png';else './img/DarkGasIcon.png'
+    }
     Text {
-        id: speed_display_val
-        font.pixelSize: 72
+        id: battery_display_val
+        text: root.batteryvoltage.toFixed(1)
+        font.pixelSize: 36
+        font.pointSize: 36
+        font.family: digital7monoitalic.name
         horizontalAlignment: Text.AlignRight
-        font.family: helvetica_black_oblique.name
-        font.pointSize: 72
-        x: 553
-        y: 358
-        width: 148
-        color: if(!root.sidelight) root.primary_color; else root.night_light_color
-        text: if (root.speedunits === 0){
-                    root.speed.toFixed(0) //"0"   // Alec added speed
-                }
-                else{
-                    root.mph.toFixed(0)
-                }
-
+        width: 110
+        height: 36
+        x: 626.3
+        y: 377
         z: 2
+        color: if (!root.sidelight)
+                   root.daylight_lcd_color
+               else
+                   root.night_light_color
+        // visible: if (root.oilpressurehigh === 0)
+        //              false
+        //          else
+        //              true
     }
-
-    Rectangle {
-        id: oiltemp_line
-        x: 16
-        y: 385
-        width: 256
-        height: 2
-        color: if(!root.sidelight) root.primary_color; else root.night_light_color
-        visible: if(root.oiltemphigh === 0)false; else true
-
+    Text{
+        id: tps_display_val
+        text: root.
     }
-    Rectangle {
-        id: oiltemp_line_vert
-        x: 270
-        y: 280
-        height: 159
-        width: 2
-        color: if(!root.sidelight) root.primary_color; else root.night_light_color
+    DropShadow{
+        z:2
+        anchors.fill: battery_display_val
+        source: battery_display_val
+        verticalOffset: 3
+        radius: 3.0
+        samples: 9
+        color: '#44000000'
     }
-
     Text {
-        id: odometer_display_val
-        text: if (root.speedunits === 0)
-                root.odometer/.62 + " km"
-                else if(root.speedunits === 1)
-                root.odometer + " mi"
-                else
-                root.odometer
-        font.pixelSize: 24
-        horizontalAlignment: Text.AlignRight
-        font.pointSize: 16
-        font.family: helvetica_black_oblique.name
-        x: 618
-        y: 440 //480 - 16 - 12
-        z: 2
-        width: 164
-        color: if(!root.sidelight) root.primary_color; else root.night_light_color
-    }
-
-    Text {
-        id: speed_label
-        x: 707
-        y: 396
-        color: if(!root.sidelight) root.primary_color; else root.night_light_color
-        text: if (root.speedunits === 0)
-                "km/h"
-                else if(root.speedunits === 1)
-                "mi/h"
-                else
-                ""
-        font.pixelSize: 32
-        horizontalAlignment: Text.AlignRight
-        z: 2
-        font.family: helvetica_black_oblique.name
-        font.pointSize: 32
-    }
-
-    // RPM Marks
-    Row {
-        id: rpmLights
-        x: 16
-        y: 16
-        width: 768
-        height: 128
-        layoutDirection: Qt.LeftToRight
-        layer.enabled: true
-        smooth: false
-        clip: false
-        z: 2
-        Repeater {
-            property int index
-            z: 2
-            model: 100
-            Row {
-                Rectangle {
-                    height: 128
-
-                    //Control for how the bar is lit
-                    opacity: if (Math.floor(root.rpm / 100) > index + 1)
-                                 .7
-                             else if (Math.floor(root.rpm / 100) === index + 1)
-                                 1
-                             else
-                                 .15
-
-                    width: 3.68
-
-                    //Settings for how our RPM colors are set
-                    color: if (index < 59)
-                            if(!root.sidelight) root.primary_color; else root.night_light_color
-                    //Cam Changeover
-                           else if (index >= 59 && index < 79)
-                               root.sweetspot_color
-                    //Redline
-                           else
-                               root.warning_red
-                    radius: 2
-                }
-                Rectangle {
-                    id: rpm_marker_spacer
-                    height: 128
-                    opacity: 1
-                    width: 4
-                    color: root.background_color
-                    radius: 1
-                    border.width: 0
-                }
-            }
-        }
-    }
-
-    //Actual RPM marks
-    Item {
-        id: rev_system
-        x: 16
-
-        //Tic Marks
-        Rectangle {
-            id: ticmark_line
-            width: 763
-            height: 2
-            x: 0
-            y: 160
-            z: 1
-            color: if(!root.sidelight) root.primary_color; else root.night_light_color
-        }
-        Rectangle {
-            id: tickmark_redline
-            x: 609
-            width: 153
-            height: 2
-            color: root.warning_red
-            y: 160
-            z: 2
-        }
-
-        Row {
-            id: mainTicks
-            x: 0
-            y: 158
-            width: 765
-            height: 16
-            antialiasing: true
-            z: 2
-            Rectangle {
-                y: 0
-                x: 73.8
-                width: 6
-                height: 18
-                color: if (root.watertemp < 80) 
-                    root.engine_warmup_color
-                else
-                   if(!root.sidelight) root.primary_color; else root.night_light_color
-                border.color: root.background_color
-                border.width: 2
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-            }
-            Rectangle {
-                y: 0
-                width: 6
-                height: 18
-                color: if (root.watertemp < 80) 
-                    root.engine_warmup_color
-                else
-                   if(!root.sidelight) root.primary_color; else root.night_light_color
-                border.color: root.background_color
-                border.width: 2
-                anchors.left: parent.left
-                anchors.leftMargin: 68
-            }
-            Rectangle {
-                y: 0
-                width: 6
-                height: 18
-                color: if (root.watertemp < 80) 
-                    root.engine_warmup_color
-                else
-                   if(!root.sidelight) root.primary_color; else root.night_light_color
-                border.color: root.background_color
-                border.width: 2
-                anchors.left: parent.left
-                anchors.leftMargin: 144
-            }
-            Rectangle {
-                y: 0
-                width: 6
-                height: 18
-                color: if (root.watertemp < 80) 
-                    root.engine_warmup_color
-                else
-                   if(!root.sidelight) root.primary_color; else root.night_light_color
-                border.color: root.background_color
-                border.width: 2
-                anchors.left: parent.left
-                anchors.leftMargin: 221
-            }
-            Rectangle {
-                y: 0
-                width: 6
-                height: 18
-                color: if (root.watertemp < 80) 
-                    root.engine_warmup_color
-                else
-                   if(!root.sidelight) root.primary_color; else root.night_light_color
-                border.color: root.background_color
-                border.width: 2
-                anchors.left: parent.left
-                anchors.leftMargin: 298
-            }
-            Rectangle {
-                y: 0
-                width: 6
-                height: 18
-                color: if(!root.sidelight) root.primary_color; else root.night_light_color
-                border.color: root.background_color
-                border.width: 2
-                anchors.left: parent.left
-                anchors.leftMargin: 375
-            }
-            Rectangle {
-                y: 0
-                width: 6
-                height: 18
-                color: if(!root.sidelight) root.primary_color; else root.night_light_color
-                border.color: root.background_color
-                border.width: 2
-                anchors.left: parent.left
-                anchors.leftMargin: 452
-            }
-            Rectangle {
-                y: 0
-                width: 6
-                height: 18
-                color: if(!root.sidelight) root.primary_color; else root.night_light_color
-                border.color: root.background_color
-                border.width: 2
-                anchors.left: parent.left
-                anchors.leftMargin: 529
-            }
-            Rectangle {
-                y: 0
-                width: 6
-                height: 18
-                color: if(!root.sidelight) root.primary_color; else root.night_light_color
-                border.color: root.background_color
-                border.width: 2
-                anchors.left: parent.left
-                anchors.leftMargin: 605
-            }
-            Rectangle {
-                y: 0
-                width: 6
-                height: 18
-                color: if(!root.sidelight) root.primary_color; else root.night_light_color
-                border.color: root.background_color
-                border.width: 2
-                anchors.left: parent.left
-                anchors.leftMargin: 682
-            }
-            Rectangle {
-                y: 0
-                width: 6
-                height: 18
-                color: if(!root.sidelight) root.primary_color; else root.night_light_color
-                border.color: root.background_color
-                border.width: 2
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-            }
-        }
-                Row {
-                    id: subTicks
-                    x: 30
-                    y: 160
-                    width: 710
-                    height: 16
-                    antialiasing: true
-                    z: 3
-                    Repeater {
-                        model: 8
-                        property int index
-                        Row {
-                            id: subTickRow
-                            width: 77
-
-                            Rectangle {
-                                width: 6
-                                height: 13
-                                x: 0
-                                y: -2
-                                border.color: root.background_color
-                                border.width: 2
-                                color: if (root.watertemp < 80) {
-                                           if (index <= 3)
-                                               root.engine_warmup_color
-                                           else
-                                            if(!root.sidelight) root.primary_color; else root.night_light_color
-
-                                       } else
-                                            if(!root.sidelight) root.primary_color; else root.night_light_color
-
-    
-
-                            }
-                        }
-                    }
-                }
-        Rectangle {
-            id: engine_warmup_line
-            x: 2
-            y: 160
-            width: 297
-            height: 2
-            z: 4
-            color: root.engine_warmup_color
-            visible: root.watertemp < 80
-        }
-
-        //RPM Numbers
-        //Changed to Manual position as the alignment wasn't nice enough for my preferences
-        Row {
-            id: numbers
-            x: 0
-            y: 180
-            height: 16
-            width: 768
-            Text {
-                id: rev_zero
-                x: 0
-               color: if (root.watertemp < 80) 
-                    root.engine_warmup_color
-                else
-                    if(!root.sidelight) root.primary_color; else root.night_light_color
-                text: "0"
-                font.pixelSize: 16
-                horizontalAlignment: Text.AlignHCenter
-                font.family: helvetica_black_oblique.name
-            }
-            Text {
-                id: rev_one
-                color: if (root.watertemp < 80) 
-                    root.engine_warmup_color
-                else
-                    if(!root.sidelight) root.primary_color; else root.night_light_color
-                text: "1"
-                anchors.left: parent.left
-                font.pixelSize: 16
-                horizontalAlignment: Text.AlignHCenter
-                anchors.leftMargin: 65
-                font.family: helvetica_black_oblique.name
-            }
-            Text {
-                id: rev_two
-                color: if (root.watertemp < 80) 
-                    root.engine_warmup_color
-                else
-                    if(!root.sidelight) root.primary_color; else root.night_light_color
-                text: "2"
-                font.pixelSize: 16
-                horizontalAlignment: Text.AlignHCenter
-                font.family: helvetica_black_oblique.name
-                anchors.leftMargin: 141
-                anchors.left: parent.left
-            }
-            Text {
-                id: rev_three
-                color: if (root.watertemp < 80) 
-                    root.engine_warmup_color
-                else
-                    if(!root.sidelight) root.primary_color; else root.night_light_color
-                text: "3"
-                font.pixelSize: 16
-                horizontalAlignment: Text.AlignHCenter
-                font.family: helvetica_black_oblique.name
-                anchors.leftMargin: 218
-                anchors.left: parent.left
-            }
-            Text {
-                id: rev_four
-                color: if (root.watertemp < 80) 
-                    root.engine_warmup_color
-                else
-                    if(!root.sidelight) root.primary_color; else root.night_light_color
-                text: "4"
-                font.pixelSize: 16
-                horizontalAlignment: Text.AlignHCenter
-                font.family: helvetica_black_oblique.name
-                anchors.leftMargin: 295
-                anchors.left: parent.left
-            }
-            Text {
-                id: rev_five
-                color: if(!root.sidelight) root.primary_color; else root.night_light_color
-                text: "5"
-                font.pixelSize: 16
-                horizontalAlignment: Text.AlignHCenter
-                font.family: helvetica_black_oblique.name
-                anchors.leftMargin: 373
-                anchors.left: parent.left
-            }
-            Text {
-                id: rev_six
-                color: if(!root.sidelight) root.primary_color; else root.night_light_color
-                text: "6"
-                font.pixelSize: 16
-                horizontalAlignment: Text.AlignHCenter
-                font.family: helvetica_black_oblique.name
-                anchors.leftMargin: 449
-                anchors.left: parent.left
-            }
-            Text {
-                id: rev_seven
-                color: if(!root.sidelight) root.primary_color; else root.night_light_color
-                text: "7"
-                font.pixelSize: 16
-                horizontalAlignment: Text.AlignHCenter
-                font.family: helvetica_black_oblique.name
-                anchors.leftMargin: 526
-                anchors.left: parent.left
-            }
-            Text {
-                id: numba_eight
-                color: if(!root.sidelight) root.primary_color; else root.night_light_color
-                text: "8"
-                font.pixelSize: 16
-                horizontalAlignment: Text.AlignHCenter
-                font.family: helvetica_black_oblique.name
-                anchors.leftMargin: 602
-                anchors.left: parent.left
-            }
-            Text {
-                id: rev_9
-                color: if(!root.sidelight) root.primary_color; else root.night_light_color
-                text: "9"
-                font.pixelSize: 16
-                horizontalAlignment: Text.AlignHCenter
-                font.family: helvetica_black_oblique.name
-                anchors.rightMargin: 78
-                anchors.right: parent.right
-            }
-            Text {
-                id: rev_10
-                x: 0
-                y: 0
-                color: if(!root.sidelight) root.primary_color; else root.night_light_color
-                text: "10"
-                anchors.right: parent.right
-                font.pixelSize: 16
-                horizontalAlignment: Text.AlignHCenter
-                anchors.rightMargin: 0
-                transformOrigin: Item.Right
-                font.family: helvetica_black_oblique.name
-            }
-        }
-
-        Text {
-            id: watertemp_label
-            x: 113
-            y: 410
-            color: if (root.watertemp < root.waterlow)
-                    root.engine_warmup_color
-                else if (root.watertemp > root.waterlow && root.watertemp < root.waterhigh)
-                   if(!root.sidelight) root.primary_color; else root.night_light_color
+        id: fuel_label
+        x: 321
+        y: 431
+        width: 128
+        color: if (root.fuel > root.fuellow)
+                   if (!root.sidelight)
+                       root.primary_color
+                   else
+                       root.night_light_color
                else
                    root.warning_red
-            text: "Water Temp °C"
-            font.pixelSize: 16
-            horizontalAlignment: Text.AlignHCenter
-            font.family: helvetica_black_oblique.name
-        }
-
-        Text {
-            id: oiltemp_label
-            x: 113
-            y: 353
-            color: if (root.oiltemp < root.oiltemphigh)
-                       if(!root.sidelight) root.primary_color; else root.night_light_color
-                   else
-                       root.warning_red
-            text: "Oil Temp °C"
-            font.pixelSize: 16
-            horizontalAlignment: Text.AlignHCenter
-            font.family: helvetica_black_oblique.name
-            visible: if(root.oiltemphigh === 0)false; else true
-
-        }
-
-        Text {
-            id: oilpressure_label
-            x: 113
-            y: 298
-            color: if(!root.sidelight) root.primary_color; else root.night_light_color
-            text: "Oil Pressure"
-            font.pixelSize: 16
-            horizontalAlignment: Text.AlignHCenter
-            font.family: helvetica_black_oblique.name
-            visible: if(root.oilpressurehigh === 0)false; else true
-
-        }
-
-        Text {
-            id: fuel_label
-            x: 321
-            y: 431
-            width: 128
-            color: if (root.fuel > root.fuellow)
-                       if(!root.sidelight) root.primary_color; else root.night_light_color
-                   else
-                       root.warning_red
-            text: if (root.fuel > root.fuellow)
-                      root.fuel + " %"
-                  else
-                      "LOW FUEL!!"
-            font.pixelSize: 16
-            horizontalAlignment: Text.AlignHCenter
-            font.family: helvetica_black_oblique.name
-        }
+        text: if (root.fuel > root.fuellow)
+                  root.fuel + " %"
+              else
+                  "LOW FUEL!!"
+        font.pixelSize: 16
+        horizontalAlignment: Text.AlignHCenter
+        font.family: digital7monoitalic.name
     }
 
     Item {
@@ -892,7 +785,10 @@ Item {
                         height: 32
                         color: if (Math.floor(root.fuel / 10) > index) {
                                    if (root.fuel > 30)
-                                       if(!root.sidelight) root.primary_color; else root.night_light_color
+                                       if (!root.sidelight)
+                                           root.primary_color
+                                       else
+                                           root.night_light_color
                                    else
                                        root.warning_red
                                } else
@@ -902,7 +798,10 @@ Item {
                                           0
                                       } else
                                           1
-                        border.color: if(!root.sidelight) root.primary_color; else root.night_light_color
+                        border.color: if (!root.sidelight)
+                                          root.primary_color
+                                      else
+                                          root.night_light_color
                         z: 1
                     }
                     Rectangle {
@@ -915,26 +814,7 @@ Item {
             }
         }
     }
-    Item {
-        id: icons
-        Image {
-            id: brights
-            x: 378
-            y: 296
-            height: 29
-            width: 46
-            source: "./img/brights.png"
-            visible: root.mainbeam
-        }
-        Image{
-            x: 285
-            y: 301
-            height: 17
-            width: 49
-            source: "./img/parking_lights.png"
-            visible: root.sidelight
-        }
-
+   
         Image {
             id: left_blinker
             x: 341
@@ -949,102 +829,8 @@ Item {
             source: "./img/right_blinker.png"
             visible: root.rightindicator
         }
-        Image {
-            id: battery_image
-            x: 731
-            y: 293
-            width: 47
-            height: 32
-            source: "./img/battery.png"
-            //autoTransform: false
-            visible: root.battery
-        }
-        Image {
-            id: cel_image
-            x: 671
-            y: 293
-            width: 52
-            source: "./img/cel.png"
-            antialiasing: true
-            height: 32
-            visible: root.mil
-        }
-
-        Image {
-            id: ebrake_image
-            x: 569
-            y: 295
-            width: 96
-            height: 32
-            source: "./img/e-brake.png"
-            visible: root.brake|root.handbrake //This is the way it is set in main.qml so trying this to see if it shows.
-        }
-        Image {
-            id: tcs_image
-            x: 531
-            y: 295
-            width: 43
-            height: 32
-            source: "./img/tcs.png"
-            visible: root.tc
-        }
-        Image {
-            id: oil_pressure_lamp
-            x: 467
-            source: "img/oillight.png"
-            y: 298
-            width: 61
-            height: 23
-            visible: root.oil
-        }
-
-        Image {
-            id: abs_image
-            x: 333
-            y: 349
-            source: "./img/abs.png"
-            sourceSize.width: 42
-            sourceSize.height: 32
-            visible: root.abs
-        }
-        Image {
-            id: seatbelt_warning_lamp
-            x: 390
-            y: 349
-            source: "./img/seatbelt.png"
-            visible: root.seatbelt
-        }
-        Image {
-            id: door_ajar_lamp
-            x: 433
-            y: 349
-            source: "./img/doorajar.png"
-            visible: root.doorswitch
-        }
-        Item {
-            x: 469
-            y: 407
-
-            Image {
-                id: fuel_icon
-                width: 17
-                height: 19
-                source: "./img/fuel_icon_white.png"
-            }
-            ColorOverlay{
-                    color: root.night_light_color
-                    source: fuel_icon
-                    enabled: root.sidelight
-                    anchors.fill: fuel_icon
-                    opacity: 1
-                    visible: root.sidelight
-                }
-        }
-    }
+    
 } //End Init Item
 
-/*##^##
-Designer {
-    D{i:0}D{i:53;locked:true}
-}
-##^##*/
+
+
