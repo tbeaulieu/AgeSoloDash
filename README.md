@@ -12,7 +12,7 @@ TO DO:
 
 - Full Screen takeover so we can use the qml warning icons instead of the new ones. *** 
 - Better animation in onLoad
-- 
+
 ## Dev Notes:
 
 When working with QML files for GAWR dash, try to make sure you're still running 5.15, as 6.0+ has gotten rid of the QTGraphicalEffects with no backwards import compatibility (Thanks guys!). If you want to do things like color overlays or glows, you will need this.
