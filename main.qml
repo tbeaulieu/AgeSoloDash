@@ -338,22 +338,22 @@ Item {
             visible: root.mil
         }
         Image{
-            source: './img/oil_warning.png'
+            source: './img/brights_on.png'
             width: 67
             height: 32
             z:2
             x: 5
-            y: 116
-            visible: root.oil
+            y: 156
+            visible: root.mainbeam
         }
         Image{
-            source: './img/engine_warning.png'
+            source: './img/airbag_warning.png'
             width: 67
             height: 32
             z:2
             x: 80
-            y: 116
-            visible: root.mil
+            y: 156
+            visible: root.airbag
         }
     }
 
@@ -719,14 +719,58 @@ Item {
     //     y:395
     //     source: if(!root.sidelight) './img/lite_tps.png';else './img/dark_tps.png'
     // }
-    Image{
-        id: gas_label
-        x: 745
-        y: 423
+
+    Item{
+        id: fueling_lcd
         z:3
-        width: 35
-        height: 32
-        source: if(!root.sidelight) './img/LightGasIcon.png';else './img/DarkGasIcon.png'
+        width: 162
+        height: 26
+        y: 424
+        x: 580
+        Item{
+            id: actual_bars
+            width: 162*(root.fuel/100)
+            height: 26
+            z: 4
+            clip: true
+            Image{
+                source: if(!root.sidelight) "./img/lit_fuelbars"; else "./img/dark_fuelbars.png"
+            }
+        }
+        Image{
+            z: 3
+            source: './img/fuel_lcd_bkg.png'
+        }
+    }
+    
+    Item{
+        id: fuel_icon
+        opacity: 100
+        z:3
+        Image{
+            id: gas_label
+            x: 745
+            y: 423
+            width: 35
+            height: 32
+            source: if(!root.sidelight) './img/LightGasIcon.png';else './img/DarkGasIcon.png'
+            opacity: 100
+        }
+        Timer{
+                id: gas_animate
+                running: if(root.fuel <= root.fuellow)
+                            true
+                        else
+                            false
+                interval: 500
+                repeat: true
+                onTriggered: if(parent.opacity === 0){
+                    parent.opacity = 100
+                }
+                else{
+                    parent.opacity = 0
+                } 
+            }
     }
     Text {
         id: battery_display_val
@@ -762,94 +806,22 @@ Item {
         samples: 9
         color: '#44000000'
     }
-    Text {
-        id: fuel_label
-        x: 321
-        y: 431
-        width: 128
-        color: if (root.fuel > root.fuellow)
-                   if (!root.sidelight)
-                       root.primary_color
-                   else
-                       root.night_light_color
-               else
-                   root.warning_red
-        text: if (root.fuel > root.fuellow)
-                  root.fuel + " %"
-              else
-                  "LOW FUEL!!"
-        font.pixelSize: 16
-        horizontalAlignment: Text.AlignHCenter
-        font.family: digital7monoitalic.name
-    }
 
-    Item {
-        id: fueling_system
-        x: 336
-        y: 402
-        width: 128
-        height: 32
-        Row {
-            id: gasgauge
-            x: 0
-            y: -8
-            width: 128
-            height: 32
-            antialiasing: true
-            z: 3
-            Repeater {
-                model: 10
-                //  required
-                property int index
-                Row {
-                    Rectangle {
-                        width: 11
-                        height: 32
-                        color: if (Math.floor(root.fuel / 10) > index) {
-                                   if (root.fuel > 30)
-                                       if (!root.sidelight)
-                                           root.primary_color
-                                       else
-                                           root.night_light_color
-                                   else
-                                       root.warning_red
-                               } else
-                                   "#0A0A0A"
-                        radius: 2
-                        border.width: if (Math.floor(root.fuel / 10) > index) {
-                                          0
-                                      } else
-                                          1
-                        border.color: if (!root.sidelight)
-                                          root.primary_color
-                                      else
-                                          root.night_light_color
-                        z: 1
-                    }
-                    Rectangle {
-                        width: 2
-                        height: 32
-                        color: root.background_color
-                        z: 1
-                    }
-                }
-            }
-        }
-    }
+    
    
         Image {
             id: left_blinker
             x: 341
             y: 295
-            source: "./img/left_blinker.png"
-            visible: root.leftindicator
+            z: 8
+            source: if(!root.leftindicator) "./img/dim_blinker.png";else "./img/lit_blinker.png"
         }
         Image {
             id: right_blinker
-            x: 432
+            x: 442
             y: 295
-            source: "./img/right_blinker.png"
-            visible: root.rightindicator
+            z: 8
+            source: if(!root.rightindicator) "./img/dim_blinker.png";else "./img/lit_blinker.png"
         }
     
 } //End Init Item
