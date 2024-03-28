@@ -372,7 +372,6 @@ Item {
         font.pixelSize: 90
         horizontalAlignment: Text.AlignRight
         font.family: digital7monoitalic.name
-        font.pointSize: 90
         x: 328
         y: 370
         width: 134
@@ -448,7 +447,6 @@ Item {
                   root.odometer
         font.pixelSize: 18
         horizontalAlignment: Text.AlignRight
-        font.pointSize: 18
         font.family: digital7monoitalic.name
         x: 463
         y: 384 //480 - 16 - 12
@@ -539,14 +537,15 @@ Item {
                     origin.y: 6
                     origin.x: 205
                     angle: Math.min(Math.max(-28.5, Math.round((root.rpm/1000)*24) - 30), 212.5)                
+                   //Match for Elise S2 spring update
+                    Behavior on angle{
+                        SpringAnimation {
+                            spring: 1.2
+                            damping:.16
+                        }
+                    }
                 }
-            //Match for Elise S2 spring update
-             Behavior on angle {
-                 SpringAnimation {
-                     spring: 1.2
-                     damping:.16
-                 }
-             }
+            
             ]
         }
     }
@@ -593,8 +592,7 @@ Item {
             height: 19
             width: 46
             source:'./img/ShiftLightLit.png'
-            visible: if(root.rpm > 7500) true; else false
-            opacity: if(root.rpm < 8200) 100
+            opacity: if(root.rpm > root.rpmlimit-1000 && root.rpm < root.rpmlimit + 200) 1; else 0
         }
         Image{
             x: 51
@@ -602,8 +600,40 @@ Item {
             height: 19
             width: 46
             source:'./img/ShiftLightLit.png'
-            visible: if(root.rpm > 7750) true; else false
-            opacity: if(root.rpm < 8200) 100
+            opacity: if(root.rpm > root.rpmlimit-500 && root.rpm < root.rpmlimit + 200) 1; else 0
+        }
+        Image{
+            x: 102
+            y: 0
+            height: 19
+            width: 46
+            source:'./img/ShiftLightLit.png'
+            opacity: if(root.rpm > root.rpmlimit-250 && root.rpm < root.rpmlimit + 200) 1; else 0
+        }
+    }
+
+    Item{
+        id: shift_lights_blinking
+        z: 3
+        x: 326
+        y: 170
+        width: 140
+        height: 19
+        Image{
+            x: 0
+            y: 0
+            height: 19
+            width: 46
+            source:'./img/ShiftLightLit.png'
+            visible: if(root.rpm < root.rpmlimit + 200) false; else true
+        }
+        Image{
+            x: 51
+            y: 0
+            height: 19
+            width: 46
+            source:'./img/ShiftLightLit.png'
+            visible: if(root.rpm < root.rpmlimit + 200) false; else true
 
         }
         Image{
@@ -612,13 +642,11 @@ Item {
             height: 19
             width: 46
             source:'./img/ShiftLightLit.png'
-            visible: if(root.rpm > 8000) true; else false
-            opacity: if(root.rpm < 8200) 100
-
+            visible: if(root.rpm < root.rpmlimit + 200) false; else true
         }
         Timer{
             id: rpm_shift_blink
-            running: if(root.rpm >= 8200)
+            running: if(root.rpm >= root.rpmlimit + 200)
                         true
                     else
                         false
@@ -632,10 +660,10 @@ Item {
             } 
         }
     }
+   
     Text {
         id: oiltemp_display_val
         font.pixelSize: 32
-        font.pointSize: 32
         font.family: digital7monoitalic.name
         width: 110
         height: 36
@@ -648,11 +676,6 @@ Item {
                    root.night_light_color
         text: root.oiltemp.toFixed(0) + "C" // "100C"
         horizontalAlignment: Text.AlignRight
-
-        // visible: if (root.oiltemphigh === 0)
-        //              false
-        //          else
-        //              true
     }
     DropShadow{
         z:2
@@ -667,7 +690,6 @@ Item {
         id: oilpressure_display_val
         text: root.oilpressure.toFixed(1)
         font.pixelSize: 36
-        font.pointSize: 36
         font.family: digital7monoitalic.name
         horizontalAlignment: Text.AlignRight
         width: 110
@@ -679,10 +701,10 @@ Item {
                    root.daylight_lcd_color
                else
                    root.night_light_color
-        // visible: if (root.oilpressurehigh === 0)
-        //              false
-        //          else
-        //              true
+        visible: if (root.oilpressurehigh === 0)
+                     false
+                 else
+                     true
     }
     DropShadow{
         z:2
@@ -784,7 +806,6 @@ Item {
         id: battery_display_val
         text: root.batteryvoltage.toFixed(1)
         font.pixelSize: 36
-        font.pointSize: 36
         font.family: digital7monoitalic.name
         horizontalAlignment: Text.AlignRight
         width: 110
@@ -796,15 +817,12 @@ Item {
                    root.daylight_lcd_color
                else
                    root.night_light_color
-        // visible: if (root.oilpressurehigh === 0)
-        //              false
-        //          else
-        //              true
+        visible: if (root.oilpressurehigh === 0)
+                     false
+                 else
+                     true
     }
-    // Text{
-    //     id: tps_display_val
-    //     text: root.
-    // }
+
     DropShadow{
         z:2
         anchors.fill: battery_display_val
@@ -832,7 +850,7 @@ Item {
             source: if(!root.rightindicator) "./img/dim_blinker.png";else "./img/lit_blinker.png"
         }
     
-} //End Init Item
+} //End AgeSoloDash
 
 
 
