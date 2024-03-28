@@ -486,10 +486,21 @@ Item {
         x: 49
         y: 373
         Image{
+            id: watertemp_needle_image
             height: 12
             width: 85
             source: './img/WaterTempNeedle'
-            transform:
+            }
+            DropShadow{
+                anchors.fill: watertemp_needle_image
+                horizontalOffset: 1
+                verticalOffset: 1
+                radius: 8.0
+                samples: 17
+                color: "#80000000"
+                source: watertemp_needle_image
+            }
+            transform:[
                 Rotation {
                     id: watertemp_rotate
                     origin.y: 6
@@ -497,8 +508,8 @@ Item {
                      //Minimum angle on horizontal needlie is negative 90 for straight down, water temp needs offset of 60 degrees, 
                      //270/60 = 4.5 for angle ratio, max rotation for that horizontal pointing left arrow is 180
                     angle:Math.min(Math.max(-90, ((root.watertemp - 60) * 4.5) - 90), 180)
-                    } 
-                }
+                    }
+            ]
         }
     Item{
         id: watertemp_warning
@@ -528,10 +539,13 @@ Item {
         x: 194
         y: 236
         Image{
+            id: tachometer_needle_image
             height: 14
             width: 239
             source: './img/TachNeedle.png'
-            transform:[
+            antialiasing: true 
+        }
+        transform:[
                 Rotation {
                     id: tachneedle_rotate
                     origin.y: 6
@@ -545,9 +559,16 @@ Item {
                         }
                     }
                 }
-            
             ]
-        }
+            DropShadow{
+                anchors.fill: tachometer_needle_image
+                horizontalOffset: 1
+                verticalOffset: 1
+                radius: 8.0
+                samples: 17
+                color: "#80000000"
+                source: tachometer_needle_image
+            }
     }
     
     Item{
@@ -679,12 +700,12 @@ Item {
     }
     DropShadow{
         z:2
-       anchors.fill: oiltemp_display_val
+        anchors.fill: oiltemp_display_val
         source: oiltemp_display_val
-       verticalOffset: 3
-       radius: 3.0
-       samples: 9
-       color: '#44000000'
+        verticalOffset: 3
+        radius: 3.0
+        samples: 9
+        color: '#44000000'
     }
     Text {
         id: oilpressure_display_val
@@ -822,7 +843,6 @@ Item {
                  else
                      true
     }
-
     DropShadow{
         z:2
         anchors.fill: battery_display_val
@@ -832,25 +852,22 @@ Item {
         samples: 9
         color: '#44000000'
     }
-
+    Image {
+        id: left_blinker
+        x: 341
+        y: 295
+        z: 8
+        source: if(!root.leftindicator) "./img/dim_blinker.png";else "./img/lit_blinker.png"
+    }
+    Image {
+        id: right_blinker
+        x: 442
+        y: 295
+        z: 8
+        source: if(!root.rightindicator) "./img/dim_blinker.png";else "./img/lit_blinker.png"
+    }
     
-   
-        Image {
-            id: left_blinker
-            x: 341
-            y: 295
-            z: 8
-            source: if(!root.leftindicator) "./img/dim_blinker.png";else "./img/lit_blinker.png"
-        }
-        Image {
-            id: right_blinker
-            x: 442
-            y: 295
-            z: 8
-            source: if(!root.rightindicator) "./img/dim_blinker.png";else "./img/lit_blinker.png"
-        }
-    
-} //End AgeSoloDash
+} //End Init Item
 
 
 
