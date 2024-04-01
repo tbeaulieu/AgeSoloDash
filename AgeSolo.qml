@@ -695,7 +695,7 @@ Item {
                    root.daylight_lcd_color
                else
                    root.night_light_color
-        text: if(!root.oiltempunits){((((root.oiltemp.toFixed(0))*9)/5)+32).toFixed(0)+"F"}; else root.oiltemp.toFixed(0) + "C"
+        text: if(!root.oiltempunits)((((root.oiltemp.toFixed(0))*9)/5)+32).toFixed(0)+"F"; else root.oiltemp.toFixed(0) + "C"
  // "100C"
         horizontalAlignment: Text.AlignRight
     }
