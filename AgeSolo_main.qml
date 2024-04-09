@@ -323,7 +323,7 @@ Item{
     Text {
         id: rpmdamping_
         x: -235
-        y: -10
+        y: -10  
         color: if(currentindex.position===26)"green";else "#ffffff"
         text: qsTr("Rpm damping")
         font.pixelSize: 19
@@ -824,9 +824,9 @@ AgeSolo   {
         oiltemplow: parent.oiltemplow
         oiltempunits: parent.oiltempunits
         batteryvoltage: parent.batteryvoltage
-        batterylow: parent.batterylow
-        afrlow:parent.afrlow
-        afrhigh:parent.afrhigh
+        //batterylow: parent.batterylow
+        //afrlow:parent.afrlow
+        //afrhigh:parent.afrhigh
 
         gearpos: parent.gearpos
         udp_message:parent.udp_message
@@ -868,3 +868,4 @@ Rectangle {
 
 }
 //! [0]
+s

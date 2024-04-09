@@ -337,7 +337,7 @@ Item {
         height: 21
         x: 481
         y: 407
-        source: if(!root.sidelight) './img/Lite_mph.png'; else './img/Dark_mph.png'
+        source: if(!root.sidelight) './img/lite_mph.png'; else './img/Dark_mph.png'
         visible: root.speedunits === 1 
     }
     // Image{
@@ -423,7 +423,7 @@ Item {
             id: watertemp_needle_image
             height: 12
             width: 85
-            source: './img/WaterTempNeedle'
+            source: './img/WaterTempNeedle.png'
             }
             DropShadow{
                 anchors.fill: watertemp_needle_image
