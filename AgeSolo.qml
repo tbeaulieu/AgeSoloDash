@@ -709,7 +709,7 @@ Item {
             z: 4
             clip: true
             Image{
-                source: if(!root.sidelight) "./img/lit_fuelbars"; else "./img/dark_fuelbars.png"
+                source: if(!root.sidelight) "./img/lit_fuelbars.png"; else "./img/dark_fuelbars.png"
             }
         }
         Image{
