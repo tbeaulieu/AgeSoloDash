@@ -357,7 +357,7 @@ Item {
         height: 21
         x: 481
         y: 428
-        source: if(!root.sidelight) './img/Lite_kmh.png'; else './img/Dark_kmh.png'
+        source: if(!root.sidelight) './img/lite_kmh.png'; else './img/Dark_kmh.png'
         visible: root.speedunits === 0
     }    
      Text {
