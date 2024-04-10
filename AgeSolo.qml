@@ -359,22 +359,11 @@ Item {
         y: 428
         source: if(!root.sidelight) './img/Lite_kmh.png'; else './img/Dark_kmh.png'
         visible: root.speedunits === 0
-    }
-    // Image{
-    //     id: km_label
-    //     z: 7
-    //     x: 501
-    //     y: 408
-    //     width: 27
-    //     height: 18
-    //     source: if(!root.sidelight) './img/lite_km.png'; else './img/dark_km.png'
-    //     visible: root.speedunits === 0
-    // }
-    
+    }    
      Text {
         id: odometer_display_val
         text: if (root.speedunits === 0)
-                  root.odometer 
+                  (root.odometer/.62).toFixed(0)
               else if (root.speedunits === 1)
                   root.odometer
               else
