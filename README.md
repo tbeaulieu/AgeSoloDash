@@ -1,3 +1,5 @@
+![image](https://github.com/tbeaulieu/AgeSoloDash/assets/3193399/04a7b21a-782c-4c5c-bc45-749ce63cb9c9)
+
 # Age Solo Dash
 
 Dashboard View for Lotus Elise GARW dash
