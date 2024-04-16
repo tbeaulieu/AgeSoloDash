@@ -6,7 +6,7 @@ Dashboard View for Lotus Elise GARW dash
 
 ###
 
-Inspired by the Ridge Racer 7 tachometer
+Inspired by the Ridge Racer 7 tachometer Age 
 
 ###
 
