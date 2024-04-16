@@ -26,3 +26,12 @@ Update 12/5/2023: QT Design Studio is really the app you want to use when visual
 ## Design notes:
 
 Still very much in Beta, might move some of the design around depending on the viewport in the actual car.
+
+# Installation notes:
+
+1) Obtain the GARW dash installer here: https://github.com/dustinsterk/GARWDashUploader
+2) You will need to unzip this dashboard file, rename the folder to "AgeSolo" (Don't use the quotes), and recompress it. (I know, it's a pain)
+3) Upload the dash via the uploader while connected to the GAWR Wifi.
+4) Follow the rest of the aforementioned instructions.
+
+There are some prebuilt releases for the uploader, check with the Discord Channel here: https://discord.gg/36kybUTW
