@@ -380,38 +380,27 @@ Item {
                else
                    root.night_light_color
     }
-    Item {
-        id: watertemp_bezel
-        x: 30
-        y: 288
-        z: 1
-        Image{
-            source: './img/WaterTempRingBack.png'
-            height: 187
-            width: 187
-        }
-    }
 
     Item { 
         id: watertemp_gaugeface
-        x: 42
-        y: 299
+        x: -6
+        y: 273
         z: 2
         Image{
-            height: 161
-            width: 161
+            height: 218
+            width: 223
             source: if(!root.sidelight) './img/LightWaterTempFace.png'; else './img/DarkWaterTempFace.png'
         }
     }
     Item {
         id: watertemp_needle
         z: 4
-        x: 49
-        y: 373
+        x: 12
+        y: 375
         Image{
             id: watertemp_needle_image
-            height: 12
-            width: 85
+            height: 16
+            width: 105
             source: './img/WaterTempNeedle.png'
             }
             DropShadow{
@@ -426,8 +415,8 @@ Item {
             transform:[
                 Rotation {
                     id: watertemp_rotate
-                    origin.y: 6
-                    origin.x: 76
+                    origin.y: 8
+                    origin.x: 95
                      //Minimum angle on horizontal needlie is negative 90 for straight down, water temp needs offset of 60 degrees, 
                      //270/60 = 4.5 for angle ratio, max rotation for that horizontal pointing left arrow is 180
                     angle:Math.min(Math.max(-90, ((root.watertemp - 60) * 4.5) - 90), 180)
@@ -437,13 +426,25 @@ Item {
     Item{
         id: watertemp_warning
         z: 4
-        x: 145
-        y: 400
+        x: 135
+        y: 405
         Image{
             height: 28
             width: 28
-            source: if(root.watertemp < root.waterhigh) './img/warninglightdim.png'; else './img/warninglightlit.png'
+            source:  './img/warninglightdim.png'
         }
+        visible: if(root.watertemp < root.waterhigh) true; else false
+    }
+    Item{
+        id: watertemp_warning_lit
+        z:4
+        x: 118; y: 387
+        Image{
+            height: 64
+            width: 63
+            source:'./img/warninglightlit.png'
+        }
+        visible: if(root.watertemp >= root.waterhigh) true; else false
     }
     Item {
         id: tachometer_back
@@ -790,7 +791,4 @@ Item {
         source: if(!root.rightindicator) "./img/dim_blinker.png";else "./img/lit_blinker.png"
     }
     
-} //End AgeSolo Item
-
-
-
+} //End AgeSolo
