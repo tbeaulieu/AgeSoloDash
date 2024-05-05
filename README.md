@@ -25,7 +25,7 @@ Update 12/5/2023: QT Design Studio is really the app you want to use when visual
 
 ## Design notes:
 
-Still very much in Beta, might move some of the design around depending on the viewport in the actual car.
+Updated water temp gauge to be bigger and easier to read, also to reflect more of an aftermarket Greddy gauge.
 
 # Installation notes:
 
