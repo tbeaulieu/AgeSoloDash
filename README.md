@@ -1,4 +1,4 @@
-![image](https://github.com/tbeaulieu/AgeSoloDash/assets/3193399/04a7b21a-782c-4c5c-bc45-749ce63cb9c9)
+![image](https://github.com/tbeaulieu/AgeSoloDash/assets/3193399/504a8eac-0621-470f-b5ed-4ab38aba9e31)
 
 # Age Solo Dash
 
@@ -25,7 +25,7 @@ Update 12/5/2023: QT Design Studio is really the app you want to use when visual
 
 ## Design notes:
 
-Still very much in Beta, might move some of the design around depending on the viewport in the actual car.
+Updated water temp gauge to be bigger and easier to read, also to reflect more of an aftermarket Greddy gauge.
 
 # Installation notes:
 
