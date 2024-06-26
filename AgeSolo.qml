@@ -395,8 +395,8 @@ Item {
     Item {
         id: watertemp_needle
         z: 4
-        x: 12
-        y: 375
+        x: 8
+        y: 378
         Image{
             id: watertemp_needle_image
             height: 16
@@ -416,7 +416,7 @@ Item {
                 Rotation {
                     id: watertemp_rotate
                     origin.y: 8
-                    origin.x: 95
+                    origin.x: 93
                      //Minimum angle on horizontal needlie is negative 90 for straight down, water temp needs offset of 60 degrees, 
                      //270/60 = 4.5 for angle ratio, max rotation for that horizontal pointing left arrow is 180
                     angle:Math.min(Math.max(-90, ((root.watertemp - 60) * 4.5) - 90), 180)
@@ -619,7 +619,7 @@ Item {
                    root.daylight_lcd_color
                else
                    root.night_light_color
-        text: if(root.oiltempunits !== 0)((((root.oiltemp.toFixed(0))*9)/5)+32).toFixed(0)+"F"; else root.oiltemp.toFixed(0) + "C"
+        text: if(root.oiltempunits !== 1)((((root.oiltemp.toFixed(0))*9)/5)+32).toFixed(0)+"F"; else root.oiltemp.toFixed(0) + "C"
         horizontalAlignment: Text.AlignRight
     }
     DropShadow{
