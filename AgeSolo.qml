@@ -2,6 +2,20 @@ import QtQuick 2.3
 import QtGraphicalEffects 1.0
 import "img"
 
+
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+// ::      _______  _______  _______    _______  _______  ___      _______       ::
+// ::     |   _   ||       ||       |  |       ||       ||   |    |       |      ::
+// ::     |  |_|  ||    ___||    ___|  |  _____||   _   ||   |    |   _   |      ::
+// ::     |       ||   | __ |   |___   | |_____ |  | |  ||   |    |  | |  |      ::
+// ::     |       ||   ||  ||    ___|  |_____  ||  |_|  ||   |___ |  |_|  |      ::
+// ::     |   _   ||   |_| ||   |___    _____| ||       ||       ||       |      ::
+// ::     |__| |__||_______||_______|  |_______||_______||_______||_______|      ::
+// ::                                                                            ::
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 Item {
     /*#########################################################################
       #############################################################################
@@ -111,7 +125,6 @@ Item {
     property bool changing_page: rpmtest.changing_pagedata
 
 
-    //Tristan Generated Code Here:
     property string white_color: "#FFFFFF"
     property string primary_color: "#FFFFFF" //#FFBF00 for amber
     property string daylight_lcd_color: "#000000" //Daylight LCD should be black (tbd)
@@ -120,8 +133,8 @@ Item {
     property string warning_red: "#FF0000" //Redline/Warning colors
     property string engine_warmup_color: "#eb7500"
     property string background_color: "#000000"
-    x: 0
-    y: 0
+    
+    x: 0; y: 0
 
     //Fonts
     FontLoader {
@@ -134,8 +147,7 @@ Item {
     /* ########################################################################## */
     Rectangle {
         id: background_rect
-        x: 0
-        y: 0
+        x: 0; y: 0
         width: 800
         height: 480
         color: root.background_color
@@ -145,8 +157,7 @@ Item {
     Item {
         id: background_gradient
         z: 0
-        x: 0
-        y: 0
+        x: 0; y: 0
         Image {
             source: './img/bkg.png'
             width: 800
@@ -155,8 +166,7 @@ Item {
     }
     Item {
         id: side_items
-        y: 266.7
-        x: 544
+        x: 544; y: 266.7
         z: 1
         Image {
             source: './img/RightDashOutside.png'
@@ -166,8 +176,7 @@ Item {
     }
     Item{
         id: side_lcd
-        y: 277
-        x: 560.7
+        x: 560.7; y: 277
         z: 2
         Image {
             source: if(!root.sidelight) './img/LightFurtherInfo.png'; else './img/DarkFurtherInfo.png'
@@ -178,8 +187,7 @@ Item {
 
     Item {
         id: centerpiece
-        y: 245.5
-        x: 245
+        x: 245; y: 245.5
         z: 3
         Image {
             source: './img/CenterPiece.png'
@@ -190,8 +198,7 @@ Item {
 
     Item {
         id: warning_lights
-        x: 635
-        y: 40
+        x: 635; y: 40
         Image {
             source: './img/warninglightholster.png'
             width: 152
@@ -203,8 +210,7 @@ Item {
             width: 67
             height: 32
             z:2
-            x: 5
-            y: 5
+            x: 5; y: 5
             visible: root.doorswitch
         }
         Image{
@@ -212,8 +218,7 @@ Item {
             width: 67
             height: 32
             z:2
-            x: 80
-            y: 5
+            x: 80; y: 5
             visible: root.brake
         }
         Image{
@@ -221,8 +226,7 @@ Item {
             width: 67
             height: 32
             z:2
-            x: 5
-            y: 42
+            x: 5; y: 42
             visible: root.seatbelt
         }
         Image{
@@ -230,8 +234,7 @@ Item {
             width: 67
             height: 32
             z:2
-            x: 80
-            y: 42
+            x: 80; y: 42
             visible: root.abs
         }
         Image{
@@ -239,8 +242,7 @@ Item {
             width: 67
             height: 32
             z:2
-            x: 5
-            y: 79
+            x: 5; y: 79
             visible: root.battery
         }
         // TPS??
@@ -258,8 +260,7 @@ Item {
             width: 67
             height: 32
             z:2
-            x: 5
-            y: 116
+            x: 5; y: 116
             visible: root.oil
         }
         Image{
@@ -267,8 +268,7 @@ Item {
             width: 67
             height: 32
             z:2
-            x: 80
-            y: 116
+            x: 80; y: 116
             visible: root.mil
         }
         Image{
@@ -276,8 +276,7 @@ Item {
             width: 67
             height: 32
             z:2
-            x: 5
-            y: 156
+            x: 5; y: 156
             visible: root.mainbeam
         }
         Image{
@@ -285,16 +284,14 @@ Item {
             width: 67
             height: 32
             z:2
-            x: 80
-            y: 156
+            x: 80; y: 156
             visible: root.airbag
         }
     }
 
     Item{
         id: mph_display
-        y: 371
-        x: 261.6
+        x: 261.6; y: 371
         z: 4
         Image { 
             source: if(!root.sidelight) './img/LightMPHDisplay.png'; else './img/DarkMPHDisplay.png'
@@ -306,8 +303,7 @@ Item {
         font.pixelSize: 90
         horizontalAlignment: Text.AlignRight
         font.family: digital7monoitalic.name
-        x: 328
-        y: 370
+        x: 328; y: 370
         width: 134
         height: 75.7
         z: 8
@@ -323,33 +319,22 @@ Item {
     }
     DropShadow{
         z:7
-       anchors.fill: speed_display_val
+        anchors.fill: speed_display_val
         source:speed_display_val
-       verticalOffset: 3
-       radius: 3.0
-       samples: 9
-       color: '#44000000'
+        verticalOffset: 3
+        radius: 3.0
+        samples: 9
+        color: '#44000000'
     }
     Image{
         id: mph_label
         z: 7
         width: 47
         height: 21
-        x: 481
-        y: 407
+        x: 481; y: 407
         source: if(!root.sidelight) './img/lite_mph.png'; else './img/Dark_mph.png'
         visible: root.speedunits === 1 
     }
-    // Image{
-    //     id: mi_label
-    //     z: 7
-    //     x: 481
-    //     y: 407
-    //     width: 24
-    //     height: 18
-    //     source: if(!root.sidelight) './img/lite_mi.png'; else './img/dark_mi.png'
-    //     visible: root.speedunits === 1 
-    // }
     Image{
         id: kmh_label
         z: 7
@@ -371,8 +356,7 @@ Item {
         font.pixelSize: 18
         horizontalAlignment: Text.AlignRight
         font.family: digital7monoitalic.name
-        x: 463
-        y: 384 //480 - 16 - 12
+        x: 463; y: 384 //480 - 16 - 12
         z: 8
         width: 62
         color: if (!root.sidelight)
@@ -383,8 +367,7 @@ Item {
 
     Item { 
         id: watertemp_gaugeface
-        x: -6
-        y: 273
+        x: -6; y: 273
         z: 2
         Image{
             height: 218
@@ -395,8 +378,7 @@ Item {
     Item {
         id: watertemp_needle
         z: 4
-        x: 8
-        y: 378
+        x: 8; y: 378
         Image{
             id: watertemp_needle_image
             height: 16
@@ -426,8 +408,7 @@ Item {
     Item{
         id: watertemp_warning
         z: 4
-        x: 135
-        y: 405
+        x: 135; y: 405
         Image{
             height: 28
             width: 28
@@ -449,8 +430,7 @@ Item {
     Item {
         id: tachometer_back
         z: 2
-        x: 171.4
-        y: 12
+        x: 171.4; y: 12
         Image{
             height: 456
             width: 457
@@ -460,8 +440,7 @@ Item {
     Item{
         id: tachometer_needle
         z: 4
-        x: 194
-        y: 236
+        x: 194; y: 236
         Image{
             id: tachometer_needle_image
             height: 14
@@ -498,27 +477,23 @@ Item {
     Item{
         id: shift_lights_dim
         z: 3
-        x: 326
-        y: 170
+        x: 326; y: 170
         width: 140
         height: 19
         Image{
-            x: 0
-            y: 0
+            x: 0; y: 0
             height: 19
             width: 46
             source:'./img/ShiftLightDimmed.png'
         }
         Image{
-            x: 51
-            y: 0
+            x: 51; y: 0
             height: 19
             width: 46
             source: './img/ShiftLightDimmed.png'
         }
         Image{
-            x: 102
-            y: 0
+            x: 102; y: 0
             height: 19
             width: 46
             source: './img/ShiftLightDimmed.png'
@@ -540,8 +515,7 @@ Item {
             opacity: if(root.rpm > root.rpmlimit-1000 && root.rpm < root.rpmlimit + 200) 1; else 0
         }
         Image{
-            x: 51
-            y: 0
+            x: 51; y: 0
             height: 19
             width: 46
             source:'./img/ShiftLightLit.png'
@@ -560,21 +534,18 @@ Item {
     Item{
         id: shift_lights_blinking
         z: 3
-        x: 326
-        y: 170
+        x: 326; y: 170
         width: 140
         height: 19
         Image{
-            x: 0
-            y: 0
+            x: 0; y: 0
             height: 19
             width: 46
             source:'./img/ShiftLightLit.png'
             visible: if(root.rpm < root.rpmlimit + 200) false; else true
         }
         Image{
-            x: 51
-            y: 0
+            x: 51; y: 0
             height: 19
             width: 46
             source:'./img/ShiftLightLit.png'
@@ -582,8 +553,7 @@ Item {
 
         }
         Image{
-            x: 102
-            y: 0
+            x: 102; y: 0
             height: 19
             width: 46
             source:'./img/ShiftLightLit.png'
@@ -612,8 +582,7 @@ Item {
         font.family: digital7monoitalic.name
         width: 110
         height: 36
-        x: 626.3
-        y: 334
+        x: 626.3; y: 334
         z: 2
         color: if (!root.sidelight)
                    root.daylight_lcd_color
@@ -639,8 +608,7 @@ Item {
         horizontalAlignment: Text.AlignRight
         width: 110
         height: 36
-        x: 626.3
-        y: 285
+        x: 626.3; y: 285
         z: 2
         color: if (!root.sidelight)
                    root.daylight_lcd_color
@@ -653,17 +621,16 @@ Item {
     }
     DropShadow{
         z:2
-       anchors.fill: oilpressure_display_val
+        anchors.fill: oilpressure_display_val
         source: oilpressure_display_val
-       verticalOffset: 3
-       radius: 3.0
-       samples: 9
-       color: '#44000000'
+        verticalOffset: 3
+        radius: 3.0
+        samples: 9
+        color: '#44000000'
     }
     Image{
         id: oilpressure_label
-        x: 738
-        y: 290
+        x: 738; y: 290
         z:3
         width: 45
         height: 32
@@ -671,8 +638,7 @@ Item {
     }
     Image{
         id: oiltemp_label
-        x: 738
-        y: 339
+        x: 738; y: 339
         z: 3
         width: 42
         height: 34
@@ -680,8 +646,7 @@ Item {
     }
     Image{
         id: volts_label
-        x: 738
-        y: 395
+        x: 738; y: 395
         z:3
         width: 39
         height: 17
@@ -700,8 +665,7 @@ Item {
         z:3
         width: 162
         height: 26
-        y: 424
-        x: 580
+        x: 580; y: 424
         Item{
             id: actual_bars
             width: 162*(root.fuel/100)
@@ -724,8 +688,7 @@ Item {
         z:3
         Image{
             id: gas_label
-            x: 745
-            y: 423
+            x: 745; y: 423
             width: 35
             height: 32
             source: if(!root.sidelight) './img/LightGasIcon.png';else './img/DarkGasIcon.png'
@@ -755,8 +718,7 @@ Item {
         horizontalAlignment: Text.AlignRight
         width: 110
         height: 36
-        x: 626.3
-        y: 377
+        x: 626.3; y: 377
         z: 2
         color: if (!root.sidelight)
                    root.daylight_lcd_color
@@ -778,15 +740,13 @@ Item {
     }
     Image {
         id: left_blinker
-        x: 341
-        y: 295
+        x: 341; y: 295
         z: 8
         source: if(!root.leftindicator) "./img/dim_blinker.png";else "./img/lit_blinker.png"
     }
     Image {
         id: right_blinker
-        x: 442
-        y: 295
+        x: 442; y: 295
         z: 8
         source: if(!root.rightindicator) "./img/dim_blinker.png";else "./img/lit_blinker.png"
     }
