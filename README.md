@@ -1,4 +1,4 @@
-![image](https://github.com/tbeaulieu/AgeSoloDash/assets/3193399/504a8eac-0621-470f-b5ed-4ab38aba9e31)
+![image](https://github.com/tbeaulieu/AgeSoloDash/assets/3193399/e786e192-4da3-41f3-be3c-4625f467a6c1)
 
 # Age Solo Dash
 
