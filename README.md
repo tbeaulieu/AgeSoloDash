@@ -6,13 +6,13 @@ Dashboard View for Lotus Elise GARW dash
 
 ###
 
-Inspired by the Ridge Racer 7 tachometer Age 
+Inspired by the Ridge Racer 7 Age tachometer for the Age cars. I might make an alternate view mode where one can use the indiglo blue numbers instead of an orange. 
 
 ###
 
 TO DO:
 
-- Full Screen takeover so we can use the qml warning icons instead of the new ones. *** 
+- Full Screen takeover so we can use the qml warning icons instead of the new ones. 
 - Better animation in onLoad
 
 ## Dev Notes:
