@@ -25,7 +25,7 @@ Update 12/5/2023: QT Design Studio is really the app you want to use when visual
 
 ## Design notes:
 
--Updated water temp gauge to be bigger and easier to read, also to reflect more of an aftermarket Greddy gauge.
+-Updated water temp gauge to be bigger and easier to read, also to reflect more of an aftermarket circa late 90's/early 2000's period correct Greddy gauge.
 
 -Changed the numbers for better legibility on the tachometer. The Roland Font just wasn't working out for me on extended testing.
 
