@@ -1,4 +1,4 @@
-![image](https://github.com/tbeaulieu/AgeSoloDash/assets/3193399/e786e192-4da3-41f3-be3c-4625f467a6c1)
+![image](https://github.com/user-attachments/assets/ec67c667-aa30-4dea-a131-21e7eb0da2a4)
 
 # Age Solo Dash
 
@@ -20,6 +20,8 @@ TO DO:
 -Updated water temp gauge to be bigger and easier to read, also to reflect more of an aftermarket circa late 90's/early 2000's period correct Greddy gauge.
 
 -Changed the numbers for better legibility on the tachometer. The Roland Font just wasn't working out for me on extended testing.
+
+- Added Shift indicator and improved gauge edge legibility.
 
 # Installation notes:
 
