@@ -141,6 +141,30 @@ Item {
         id: digital7monoitalic
         source: "./fonts/digital7monoitalic.ttf"
     }
+    //Utilities
+
+    function getGear(){
+        switch(rpmtest.geardata){
+            case 0:
+                return 'n'
+            case 1:
+                return 1
+            case 2:
+                return 2
+            case 3:
+                return 3
+            case 4:
+                return 4
+            case 5:
+                return 5
+            case 6:
+                return 6
+            case 10:
+                return 'r'
+            default:
+                return '-'
+        }
+    }
 
     /* ########################################################################## */
     /* Main Layout items */
@@ -169,28 +193,48 @@ Item {
         x: 544; y: 266.7
         z: 1
         Image {
-            source: './img/RightDashOutside.png'
+            source: if(!root.sidelight) './img/RightDashOutside.png'; else './img/RightDashOutsideDark.png'
             width: 250
             height: 208
         }
     }
-    Item{
-        id: side_lcd
-        x: 560.7; y: 277
-        z: 2
-        Image {
-            source: if(!root.sidelight) './img/LightFurtherInfo.png'; else './img/DarkFurtherInfo.png'
-            width: 222.1
-            height: 182
-        }
-    }
 
+    Text{
+            id: gear_display_char
+            z:10
+            font.bold: false
+            font.pixelSize: 90
+            font.family: digital7monoitalic.name
+            font.italic: true
+            x: 382; y: 270
+            height: 78
+            text: getGear()
+            color: if (!root.sidelight)
+                   root.daylight_lcd_color
+               else
+                   root.night_light_color
+            renderType: Text.NativeRendering
+            opacity: 1
+        }
+
+    DropShadow{
+            z:7
+            anchors.fill: gear_display_char
+            source: gear_display_char
+            verticalOffset: 3
+            radius: 3.0
+            samples: 9
+            color: '#44000000'
+        }
     Item {
         id: centerpiece
         x: 245; y: 245.5
         z: 3
+
+        
+
         Image {
-            source: './img/CenterPiece.png'
+            source: if(!root.sidelight) './img/CenterPiece.png'; else './img/CenterPieceDark.png'
             width: 313
             height: 230
         }
@@ -289,21 +333,13 @@ Item {
         }
     }
 
-    Item{
-        id: mph_display
-        x: 261.6; y: 371
-        z: 4
-        Image { 
-            source: if(!root.sidelight) './img/LightMPHDisplay.png'; else './img/DarkMPHDisplay.png'
-        }
-    }
-
     Text {
         id: speed_display_val
         font.pixelSize: 90
         horizontalAlignment: Text.AlignRight
         font.family: digital7monoitalic.name
-        x: 328; y: 370
+        font.italic: true
+        x: 331; y: 372
         width: 134
         height: 75.7
         z: 8
@@ -312,20 +348,20 @@ Item {
                else
                    root.night_light_color
         text: if (root.speedunits === 0) {
-                  root.speed.toFixed(0) //"0"   // Alec added speed
+                  root.speed.toFixed(0) 
               } else {
                   root.mph.toFixed(0)
               }
     }
-    DropShadow{
-        z:7
-        anchors.fill: speed_display_val
-        source:speed_display_val
-        verticalOffset: 3
-        radius: 3.0
-        samples: 9
-        color: '#44000000'
-    }
+        DropShadow{
+            z:7
+            anchors.fill: speed_display_val
+            source:speed_display_val
+            verticalOffset: 3
+            radius: 3.0
+            samples: 9
+            color: '#44000000'
+        }
     Image{
         id: mph_label
         z: 7
@@ -378,7 +414,7 @@ Item {
     Item {
         id: watertemp_needle
         z: 4
-        x: 8; y: 378
+        x: 12; y: 375
         Image{
             id: watertemp_needle_image
             height: 16
@@ -440,12 +476,12 @@ Item {
     Item{
         id: tachometer_needle
         z: 4
-        x: 194; y: 236
+        x: 196; y: 236
         Image{
             id: tachometer_needle_image
             height: 14
             width: 239
-            source: './img/TachNeedle.png'
+            source: if(root.rpm <=5000) './img/TachNeedle.png'; else './img/TachNeedleFlipped.png'
             antialiasing: true 
         }
         transform:[
@@ -477,7 +513,7 @@ Item {
     Item{
         id: shift_lights_dim
         z: 3
-        x: 326; y: 170
+        x: 326; y: 176
         width: 140
         height: 19
         Image{
@@ -503,7 +539,7 @@ Item {
         id: shift_lights
         z: 3
         x: 326
-        y: 170
+        y: 176
         width: 140
         height: 19
         Image{
@@ -534,7 +570,7 @@ Item {
     Item{
         id: shift_lights_blinking
         z: 3
-        x: 326; y: 170
+        x: 326; y: 176
         width: 140
         height: 19
         Image{
@@ -578,11 +614,12 @@ Item {
    
     Text {
         id: oiltemp_display_val
-        font.pixelSize: 32
+        font.pixelSize: 36
         font.family: digital7monoitalic.name
+        font.italic: true
         width: 110
         height: 36
-        x: 626.3; y: 334
+        x: 628; y: 335
         z: 2
         color: if (!root.sidelight)
                    root.daylight_lcd_color
@@ -606,9 +643,10 @@ Item {
         font.pixelSize: 36
         font.family: digital7monoitalic.name
         horizontalAlignment: Text.AlignRight
+        font.italic: true
         width: 110
         height: 36
-        x: 626.3; y: 285
+        x: 628; y: 285
         z: 2
         color: if (!root.sidelight)
                    root.daylight_lcd_color
@@ -630,7 +668,7 @@ Item {
     }
     Image{
         id: oilpressure_label
-        x: 738; y: 290
+        x: 738; y: 292
         z:3
         width: 45
         height: 32
@@ -638,15 +676,45 @@ Item {
     }
     Image{
         id: oiltemp_label
-        x: 738; y: 339
+        x: 738; y: 341
         z: 3
         width: 42
         height: 34
         source: if(!root.sidelight) './img/LightOilTemp.png';else './img/DarkOilTemp.png'
     }
+
+    Text {
+        id: battery_display_val
+        text: root.batteryvoltage.toFixed(1)
+        font.pixelSize: 36
+        font.family: digital7monoitalic.name
+        horizontalAlignment: Text.AlignRight
+        font.italic: true
+        width: 110
+        height: 36
+        x: 628; y: 379
+        z: 2
+        color: if (!root.sidelight)
+                   root.daylight_lcd_color
+               else
+                   root.night_light_color
+        visible: if (root.oilpressurehigh === 0)
+                     false
+                 else
+                     true
+    }
+    DropShadow{
+        z:2
+        anchors.fill: battery_display_val
+        source: battery_display_val
+        verticalOffset: 3
+        radius: 3.0
+        samples: 9
+        color: '#44000000'
+    }
     Image{
         id: volts_label
-        x: 738; y: 395
+        x: 738; y: 399
         z:3
         width: 39
         height: 17
@@ -675,6 +743,15 @@ Item {
             Image{
                 source: if(!root.sidelight) "./img/lit_fuelbars.png"; else "./img/dark_fuelbars.png"
             }
+        }
+        DropShadow{
+            z:2
+            anchors.fill: actual_bars
+            source: actual_bars
+            verticalOffset: 3
+            radius: 3.0
+            samples: 9
+            color: '#44000000'
         }
         Image{
             z: 3
@@ -710,34 +787,7 @@ Item {
                 } 
             }
     }
-    Text {
-        id: battery_display_val
-        text: root.batteryvoltage.toFixed(1)
-        font.pixelSize: 36
-        font.family: digital7monoitalic.name
-        horizontalAlignment: Text.AlignRight
-        width: 110
-        height: 36
-        x: 626.3; y: 377
-        z: 2
-        color: if (!root.sidelight)
-                   root.daylight_lcd_color
-               else
-                   root.night_light_color
-        visible: if (root.oilpressurehigh === 0)
-                     false
-                 else
-                     true
-    }
-    DropShadow{
-        z:2
-        anchors.fill: battery_display_val
-        source: battery_display_val
-        verticalOffset: 3
-        radius: 3.0
-        samples: 9
-        color: '#44000000'
-    }
+    
     Image {
         id: left_blinker
         x: 341; y: 295
