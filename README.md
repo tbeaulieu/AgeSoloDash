@@ -17,9 +17,9 @@ TO DO:
 
 ## Design notes:
 
--Updated water temp gauge to be bigger and easier to read, also to reflect more of an aftermarket circa late 90's/early 2000's period correct Greddy gauge.
+- Updated water temp gauge to be bigger and easier to read, also to reflect more of an aftermarket circa late 90's/early 2000's period correct Greddy gauge.
 
--Changed the numbers for better legibility on the tachometer. The Roland Font just wasn't working out for me on extended testing.
+- Changed the numbers for better legibility on the tachometer. The Roland Font just wasn't working out for me on extended testing.
 
 - Added Shift indicator and improved gauge edge legibility.
 
