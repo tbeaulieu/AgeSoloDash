@@ -8,12 +8,17 @@ Dashboard View for Lotus Elise GARW dash
 
 Inspired by the Ridge Racer 7 Age tachometer for the Age cars. I might make an alternate view mode where one can use the indiglo blue numbers instead of an orange. 
 
+This dash will require you to update your gear settings (under settings -> gears) for the calculated gear (unless you're very fancy and running a sequential with a canbus output), the following works decently for me currently with a stock C64 transmission:
+
+(1st) 123 (2nd) 83 (3rd) 60 (4th) 47 (5th) 37 (6th) 33
+
 ###
 
 TO DO:
 
 - Full Screen takeover so we can use the qml warning icons instead of the new ones. 
 - Better animation in onLoad
+- Integrate a second mode with the down button to allow an alternative view for more information (eg wideband/pressure/air temp)
 
 ## Design notes:
 
