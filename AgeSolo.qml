@@ -538,7 +538,7 @@ Item {
             horizontalOffset: parent.calculateShadowOffset().x
             verticalOffset: parent.calculateShadowOffset().y
             radius: 8.0
-            samples: 17
+            samples: 9
             color: "#80000000"
         }
     }
