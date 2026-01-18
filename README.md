@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/ec67c667-aa30-4dea-a131-21e7eb0da2a4)
+<img width="800" height="480" alt="image" src="https://github.com/user-attachments/assets/e7f18dfe-1887-4fdb-b5f3-c249a0b47e20" />
 
 # Age Solo Dash
 
