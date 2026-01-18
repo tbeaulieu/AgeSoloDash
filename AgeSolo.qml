@@ -206,7 +206,7 @@ Item {
             font.pixelSize: 90
             font.family: digital7monoitalic.name
             font.italic: true
-            x: 382; y: 270
+            x: 382; y: 265
             height: 78
             text: getGear()
             color: if (!root.sidelight)
@@ -230,9 +230,6 @@ Item {
         id: centerpiece
         x: 245; y: 245.5
         z: 3
-
-        
-
         Image {
             source: if(!root.sidelight) './img/CenterPiece.png'; else './img/CenterPieceDark.png'
             width: 313
@@ -252,7 +249,7 @@ Item {
         Image{
             source: './img/door_warning.png'
             width: 67
-            height: 32
+            height: 37
             z:2
             x: 5; y: 5
             visible: root.doorswitch
@@ -260,7 +257,7 @@ Item {
         Image{
             source: './img/ebrake_warning.png'
             width: 67
-            height: 32
+            height: 37
             z:2
             x: 80; y: 5
             visible: root.brake
@@ -268,25 +265,25 @@ Item {
         Image{
             source: './img/seatbelt_warning.png'
             width: 67
-            height: 32
+            height: 37
             z:2
-            x: 5; y: 42
+            x: 5; y: 45
             visible: root.seatbelt
         }
         Image{
             source: './img/abs_warning.png'
             width: 67
-            height: 32
+            height: 37
             z:2
-            x: 80; y: 42
+            x: 80; y: 45
             visible: root.abs
         }
         Image{
             source: './img/battery_warning.png'
             width: 67
-            height: 32
+            height: 37
             z:2
-            x: 5; y: 79
+            x: 5; y: 85
             visible: root.battery
         }
         // TPS??
@@ -302,33 +299,33 @@ Item {
         Image{
             source: './img/oil_warning.png'
             width: 67
-            height: 32
+            height: 37
             z:2
-            x: 5; y: 116
+            x: 5; y: 125
             visible: root.oil
         }
         Image{
             source: './img/engine_warning.png'
             width: 67
-            height: 32
+            height: 37
             z:2
-            x: 80; y: 116
+            x: 80; y: 125
             visible: root.mil
         }
         Image{
             source: './img/brights_on.png'
             width: 67
-            height: 32
+            height: 37
             z:2
-            x: 5; y: 156
+            x: 5; y: 165
             visible: root.mainbeam
         }
         Image{
             source: './img/airbag_warning.png'
             width: 67
-            height: 32
+            height: 37
             z:2
-            x: 80; y: 156
+            x: 80; y: 165
             visible: root.airbag
         }
     }
@@ -339,7 +336,7 @@ Item {
         horizontalAlignment: Text.AlignRight
         font.family: digital7monoitalic.name
         font.italic: true
-        x: 331; y: 372
+        x: 331; y: 369
         width: 134
         height: 75.7
         z: 8
@@ -415,32 +412,51 @@ Item {
         id: watertemp_needle
         z: 4
         x: 12; y: 375
-        Image{
+        
+        // Calculate shadow offset based on needle angle
+        // Light source is at top (0 degrees)
+        function calculateShadowOffset() {
+            let angle = watertemp_rotate.angle
+            let shadowDistance = 4  // slightly smaller for water temp needle
+            
+            // Convert angle to radians
+            let rad = (angle * Math.PI) / 180
+            
+            // Calculate x and y offset based on angle
+            let offsetX = Math.sin(rad) * shadowDistance
+            let offsetY = Math.cos(rad) * shadowDistance
+            
+            return { x: offsetX, y: offsetY }
+        }
+        
+        Image {
             id: watertemp_needle_image
             height: 16
             width: 105
             source: './img/WaterTempNeedle.png'
-            }
-            DropShadow{
-                anchors.fill: watertemp_needle_image
-                horizontalOffset: 1
-                verticalOffset: 1
-                radius: 8.0
-                samples: 17
-                color: "#80000000"
-                source: watertemp_needle_image
-            }
-            transform:[
-                Rotation {
-                    id: watertemp_rotate
-                    origin.y: 8
-                    origin.x: 93
-                     //Minimum angle on horizontal needlie is negative 90 for straight down, water temp needs offset of 60 degrees, 
-                     //270/60 = 4.5 for angle ratio, max rotation for that horizontal pointing left arrow is 180
-                    angle:Math.min(Math.max(-90, ((root.watertemp - 60) * 4.5) - 90), 180)
-                    }
-            ]
         }
+        
+        transform: [
+            Rotation {
+                id: watertemp_rotate
+                origin.y: 8
+                origin.x: 93
+                // Minimum angle on horizontal needle is -90 for straight down, water temp needs offset of 60 degrees
+                // 270/60 = 4.5 for angle ratio, max rotation is 180
+                angle: Math.min(Math.max(-90, ((root.watertemp - 60) * 4.5) - 90), 180)
+            }
+        ]
+        
+        DropShadow {
+            anchors.fill: watertemp_needle_image
+            horizontalOffset: parent.calculateShadowOffset().x
+            verticalOffset: parent.calculateShadowOffset().y
+            radius: 6.0
+            samples: 13
+            color: "#80000000"
+            source: watertemp_needle_image
+        }
+    }
     Item{
         id: watertemp_warning
         z: 4
@@ -473,41 +489,58 @@ Item {
             source: if(!root.sidelight) './img/LightTachFace.png'; else './img/DarkTachFace.png'
         }
     }
-    Item{
+    Item {
         id: tachometer_needle
         z: 4
         x: 196; y: 236
-        Image{
+        
+        // Calculate shadow offset based on needle angle
+        // Light source is at top (0 degrees)
+        function calculateShadowOffset() {
+            let angle = tachneedle_rotate.angle
+            let shadowDistance = 8  // how far the shadow extends
+            
+            // Convert angle to radians
+            let rad = (angle * Math.PI) / 180
+            
+            // Calculate x and y offset based on angle
+            // Since light is at top, shadow points opposite direction
+            let offsetX = Math.sin(rad) * shadowDistance
+            let offsetY = Math.cos(rad) * shadowDistance
+            
+            return { x: offsetX, y: offsetY }
+        }
+        
+        transform: Rotation {
+            id: tachneedle_rotate
+            origin.y: 6
+            origin.x: 205
+            angle: Math.min(Math.max(-28.5, Math.round((root.rpm/1000)*24) - 30), 212.5)
+            Behavior on angle {
+                SpringAnimation {
+                    spring: 1.2
+                    damping: .16
+                }
+            }
+        }
+        
+        Image {
             id: tachometer_needle_image
             height: 14
             width: 239
-            source: if(root.rpm <=5000) './img/TachNeedle.png'; else './img/TachNeedleFlipped.png'
-            antialiasing: true 
+            source: if(root.rpm <= 5000) './img/TachNeedle.png'; else './img/TachNeedleFlipped.png'
+            antialiasing: true
         }
-        transform:[
-                Rotation {
-                    id: tachneedle_rotate
-                    origin.y: 6
-                    origin.x: 205
-                    angle: Math.min(Math.max(-28.5, Math.round((root.rpm/1000)*24) - 30), 212.5)                
-                   //Match for Elise S2 spring update
-                    Behavior on angle{
-                        SpringAnimation {
-                            spring: 1.2
-                            damping:.16
-                        }
-                    }
-                }
-            ]
-            DropShadow{
-                anchors.fill: tachometer_needle_image
-                horizontalOffset: 1
-                verticalOffset: 1
-                radius: 8.0
-                samples: 17
-                color: "#80000000"
-                source: tachometer_needle_image
-            }
+        
+        DropShadow {
+            anchors.fill: tachometer_needle_image
+            source: tachometer_needle_image
+            horizontalOffset: parent.calculateShadowOffset().x
+            verticalOffset: parent.calculateShadowOffset().y
+            radius: 8.0
+            samples: 17
+            color: "#80000000"
+        }
     }
     
     Item{
