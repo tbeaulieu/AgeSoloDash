@@ -1,3 +1,5 @@
+##ARCHIVE FOR V4 DASHES. DO NOT UPDATE.
+
 <img width="1027" height="615" alt="image" src="https://github.com/user-attachments/assets/aabcda13-0633-4fc8-8b0f-0e6631b87311" />
 
 # Age Solo Dash
