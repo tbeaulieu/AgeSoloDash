@@ -124,7 +124,8 @@ Item {
 
     property bool changing_page: rpmtest.changing_pagedata
 
-
+    property string settingsFocus: ""
+    property string userColor: ""
     property string white_color: "#FFFFFF"
     property string primary_color: "#FFFFFF" //#FFBF00 for amber
     property string daylight_lcd_color: "#000000" //Daylight LCD should be black (tbd)
@@ -481,7 +482,7 @@ Item {
     }
     Item {
         id: tachometer_back
-        z: 2
+        z: 1
         x: 171.4; y: 12
         Image{
             height: 456
@@ -491,7 +492,7 @@ Item {
     }
     Item {
         id: tachometer_needle
-        z: 4
+        z: 2
         x: 196; y: 236
         
         // Calculate shadow offset based on needle angle
@@ -545,7 +546,7 @@ Item {
     
     Item{
         id: shift_lights_dim
-        z: 3
+        z: 1
         x: 326; y: 176
         width: 140
         height: 19
@@ -672,7 +673,11 @@ Item {
     }
     Text {
         id: oilpressure_display_val
-        text: root.oilpressure.toFixed(1)
+        text: if(root.oilpressureunits == 1){
+                root.oilpressure.toFixed(1)}
+            else{
+                (root.oilpressure.toFixed(1)*14.5038).toFixed(0)
+            }
         font.pixelSize: 36
         font.family: digital7monoitalic.name
         horizontalAlignment: Text.AlignRight
