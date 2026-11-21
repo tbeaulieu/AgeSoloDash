@@ -62,9 +62,9 @@ Item{
     property int fuelhigh:0
     property int fuelunits:1
     property int oiltemplow:0
-    property int oiltemphigh:0
+    property int oiltemphigh:130          // in the displayed units (C or F); readout turns red and flashes at this, 0 = no warning
     property int oiltempunits:1           // 0 = F, 1 = C
-    property int oilpressurelow:0
+    property int oilpressurelow:1         // always bar; readout turns red and flashes below this, 0 = no warning
     property int oilpressurehigh:0
     property int oilpressureunits:0       // 0 = PSI, 1 = BAR
     property real night_time_hue:0
@@ -128,8 +128,8 @@ Item{
         { key: "colorscheme",      type: "string" },
         { key: "red" },  { key: "green" },  { key: "blue" },
         { key: "waterhigh" },      { key: "fuellow" },
-        { key: "oiltempshow" },    { key: "oiltempunits" },
-        { key: "oilpressureshow" },{ key: "oilpressureunits" },
+        { key: "oiltempshow" },    { key: "oiltempunits" },    { key: "oiltemphigh" },
+        { key: "oilpressureshow" },{ key: "oilpressureunits" },{ key: "oilpressurelow" },
         { key: "batteryshow" },
         { key: "speedunits" },     { key: "rpmlimit" },
         // the AgeSolo dial has nothing that uses these
@@ -138,8 +138,6 @@ Item{
         { key: "fuelhigh",         disabled: true },
         { key: "fuelunits",        disabled: true },
         { key: "oiltemplow",       disabled: true },
-        { key: "oiltemphigh",      disabled: true },
-        { key: "oilpressurelow",   disabled: true },
         { key: "oilpressurehigh",  disabled: true },
         { key: "shiftvalue",       disabled: true },
         { key: "night_time_hue",   disabled: true },
@@ -203,8 +201,33 @@ Item{
     // The dial has no "both" speed mode; an old 2 behaved as MPH
     function fixSpeedUnits() { if (root.speedunits !== 0) root.speedunits = 1 }
 
-    // returns "json", "json-moved", "legacy", "none" or "error"
+    // Oil temp High is kept in whatever units the readout shows (C or F). Switching Units
+    // in the menu converts it so it stays the same temperature (130 C <-> 266 F). The dial
+    // works in Celsius, so it is handed the Celsius equivalent.
+    property bool configLoading: false
+    function c2f(c) { return Math.round(c * 9 / 5 + 32) }
+    function f2c(f) { return Math.round((f - 32) * 5 / 9) }
+    readonly property real oiltemphighC: (oiltemphigh === 0 || oiltempunits === 1) ? oiltemphigh : (oiltemphigh - 32) * 5 / 9
+    onOiltempunitsChanged: {
+        if (configLoading || oiltemphigh === 0) return
+        oiltemphigh = (oiltempunits === 1) ? f2c(oiltemphigh) : c2f(oiltemphigh)
+    }
+    // Oil temp High and oil pressure Low did nothing before this version, so values found in
+    // an older file are not trusted: start from the defaults, in the units in use.
+    function defaultOilLimits() {
+        root.oiltemphigh = (root.oiltempunits === 1) ? 130 : c2f(130)
+        root.oilpressurelow = 1
+    }
+
+    // returns "json", "json-moved", "json-upgraded", "legacy", "none" or "error"
     function loadConfig() {
+        configLoading = true
+        var r = loadConfigFiles()
+        configLoading = false
+        return r
+    }
+
+    function loadConfigFiles() {
         var moved = false
         var lines = readLines(config_json, 300)
         if (lines.length === 0) { lines = readLines(config_json_rel, 300); moved = lines.length > 0 }
@@ -219,6 +242,7 @@ Item{
                 if (!obj.hasOwnProperty("oilpressureshow") && obj.hasOwnProperty("oilpressurehigh"))
                     showFromOldHigh(obj.oilpressurehigh)
                 fixSpeedUnits()
+                if (!obj.hasOwnProperty("limitsFollowUnits")) { defaultOilLimits(); return "json-upgraded" }
                 return moved ? "json-moved" : "json"
             } catch (e) {
                 console.log("config JSON invalid, keeping defaults and NOT overwriting: " + e)
@@ -232,6 +256,7 @@ Item{
                 if (legacyKeys[j]) applyConfigValue(legacyKeys[j], old[j])
             showFromOldHigh(old[legacyKeys.indexOf("oilpressurehigh")])
             fixSpeedUnits()
+            defaultOilLimits()
             return "legacy"
         }
         return "none"
@@ -241,6 +266,7 @@ Item{
         var obj = {}
         for (var i = 0; i < editableSettings.length; i++)
             obj[editableSettings[i].key] = root[editableSettings[i].key]
+        obj.limitsFollowUnits = 1          // oil temp High is stored in its displayed units
         try {
             config_json.open()
             config_json.writetoopenfile(JSON.stringify(obj, null, 2) + "\n")   // single write
@@ -251,7 +277,7 @@ Item{
     Component.onCompleted: {
         try { rpmtest.DISABLE_WARNING_OVERLAY = "YES_WARNINGS_HANDLED_LOCALLY" } catch (e) {}
         var r = loadConfig()
-        if (r === "legacy" || r === "none" || r === "json-moved") save_settings()   // migrate / seed defaults
+        if (r === "legacy" || r === "none" || r === "json-moved" || r === "json-upgraded") save_settings()   // migrate / seed defaults
     }
 
     ///////////////////////////////
@@ -379,7 +405,7 @@ Item{
         oilpressurelow:root.oilpressurelow
         oilpressureunits: root.oilpressureunits
         oiltemp: root.oiltemp
-        oiltemphigh:root.oiltemphigh
+        oiltemphigh:root.oiltemphighC      // Celsius equivalent
         oiltemplow: root.oiltemplow
         oiltempunits: root.oiltempunits
         oiltempshow: root.oiltempshow

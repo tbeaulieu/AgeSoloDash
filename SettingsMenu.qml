@@ -60,13 +60,17 @@ Item {
         { name: "Fuel", rows: [
             { key: "fuellow",        label: "Low",   type: "number", min: 0, step: 1 } ] },
 
+        // High is in the units chosen above (changing Units converts it), 0 = no warning
         { name: "Oil temp", rows: [
             { key: "oiltempshow",    label: "Show",  type: "enum",   options: ["OFF", "ON"] },
-            { key: "oiltempunits",   label: "Units", type: "enum",   options: ["F", "C"] } ] },
+            { key: "oiltempunits",   label: "Units", type: "enum",   options: ["F", "C"] },
+            { key: "oiltemphigh",    label: "High",  type: "number", min: 0, step: 1 } ] },
 
+        // Low is always bar, 0 = no warning
         { name: "Oil press", rows: [
             { key: "oilpressureshow",  label: "Show",  type: "enum",   options: ["OFF", "ON"] },
-            { key: "oilpressureunits", label: "Units", type: "enum",   options: ["PSI", "BAR"] } ] },
+            { key: "oilpressureunits", label: "Units", type: "enum",   options: ["PSI", "BAR"] },
+            { key: "oilpressurelow",   label: "Low",   type: "number", min: 0, step: 1 } ] },
 
         { name: "Battery", rows: [
             { key: "batteryshow",    label: "Show",  type: "enum",   options: ["OFF", "ON"] } ] },

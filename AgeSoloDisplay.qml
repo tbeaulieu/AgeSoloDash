@@ -129,6 +129,18 @@ Item {
     property int batteryshow: 1           // 0 = hide the battery voltage readout
     // Water High is Celsius; 0 = no warning lamp
     readonly property bool waterHot: waterhigh !== 0 && watertemp >= waterhigh
+    // Oil warnings: the number turns red and flashes. High is Celsius here, Low is bar; 0 = off.
+    // A hidden readout does not warn.
+    readonly property bool oiltempWarn: oiltempshow === 1 && oiltemphigh !== 0 && oiltemp >= oiltemphigh
+    readonly property bool oilpressureWarn: oilpressureshow === 1 && oilpressurelow !== 0 && oilpressure < oilpressurelow
+    property bool warnBlink: false
+    Timer{
+        running: root.oiltempWarn || root.oilpressureWarn
+        interval: 400
+        repeat: true
+        onTriggered: root.warnBlink = !root.warnBlink
+        onRunningChanged: if(!running) root.warnBlink = false
+    }
 
     property string settingsFocus: ""   // key of the setting being edited, "" when the menu is closed
     property string userColor: ""
@@ -658,16 +670,20 @@ Item {
         height: 36
         x: 628; y: 335
         z: 2
-        color: if (!root.sidelight)
+        color: if (root.oiltempWarn)
+                   root.warning_red
+               else if (!root.sidelight)
                    root.daylight_lcd_color
                else
                    root.night_light_color
+        opacity: root.oiltempWarn && root.warnBlink ? 0.25 : 1
         text: if(root.oiltempunits !== 1)((((root.oiltemp.toFixed(0))*9)/5)+32).toFixed(0)+"F"; else root.oiltemp.toFixed(0) + "C"
         horizontalAlignment: Text.AlignRight
         visible: root.oiltempshow === 1
     }
     DropShadow{
         z:2
+        opacity: root.oiltempWarn && root.warnBlink ? 0.25 : 1
         visible: root.oiltempshow === 1     // the shadow effect draws its source too, so it must be hidden with it
         anchors.fill: oiltemp_display_val
         source: oiltemp_display_val
@@ -691,14 +707,18 @@ Item {
         height: 36
         x: 628; y: 285
         z: 2
-        color: if (!root.sidelight)
+        color: if (root.oilpressureWarn)
+                   root.warning_red
+               else if (!root.sidelight)
                    root.daylight_lcd_color
                else
                    root.night_light_color
+        opacity: root.oilpressureWarn && root.warnBlink ? 0.25 : 1
         visible: root.oilpressureshow === 1
     }
     DropShadow{
         z:2
+        opacity: root.oilpressureWarn && root.warnBlink ? 0.25 : 1
         visible: root.oilpressureshow === 1
         anchors.fill: oilpressure_display_val
         source: oilpressure_display_val
@@ -854,8 +874,8 @@ Item {
     //   waterhigh -> the water warning lamp pulses
     readonly property int focusSpot: {
         var k = root.settingsFocus
-        if (k === "oilpressureshow" || k === "oilpressureunits") return 0
-        if (k === "oiltempshow" || k === "oiltempunits") return 1
+        if (k === "oilpressureshow" || k === "oilpressureunits" || k === "oilpressurelow") return 0
+        if (k === "oiltempshow" || k === "oiltempunits" || k === "oiltemphigh") return 1
         if (k === "batteryshow") return 2
         if (k === "fuellow") return 3
         if (k === "speedunits") return 4
