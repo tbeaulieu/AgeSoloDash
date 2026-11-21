@@ -74,7 +74,7 @@ Item {
     property bool left_joystick: inputs & 0x20000000 || root.udp_left
     property bool right_joystick: inputs & 0x40000000 || root.udp_right
 
-    property int odometer: rpmtest.odometer0data/10*0.62 //Need to div by 10 to get 6 digits with leading 0
+    property int odometer: rpmtest.odometer0data/10 //Overridden by AgeSolo.qml: km or miles to match speedunits, div by 10 to get 6 digits
     property int tripmeter: rpmtest.tripmileage0data*0.62
     property real value: 0
     property real shiftvalue: 0
@@ -112,7 +112,7 @@ Item {
 
     property real batteryvoltage: rpmtest.batteryvoltagedata
 
-    property int mph: (speed * 0.62)
+    property int mph: Math.round(speed * 0.621371)
 
     property int gearpos: rpmtest.geardata
 
@@ -124,7 +124,25 @@ Item {
 
     property bool changing_page: rpmtest.changing_pagedata
 
-    property string settingsFocus: ""
+    property int oiltempshow: 1           // 0 = hide the oil temp readout
+    property int oilpressureshow: 1       // 0 = hide the oil pressure readout
+    property int batteryshow: 1           // 0 = hide the battery voltage readout
+    // Water High is Celsius; 0 = no warning lamp
+    readonly property bool waterHot: waterhigh !== 0 && watertemp >= waterhigh
+    // Oil warnings: the number turns red and flashes. High is Celsius here, Low is bar; 0 = off.
+    // A hidden readout does not warn.
+    readonly property bool oiltempWarn: oiltempshow === 1 && oiltemphigh !== 0 && oiltemp >= oiltemphigh
+    readonly property bool oilpressureWarn: oilpressureshow === 1 && oilpressurelow !== 0 && oilpressure < oilpressurelow
+    property bool warnBlink: false
+    Timer{
+        running: root.oiltempWarn || root.oilpressureWarn
+        interval: 400
+        repeat: true
+        onTriggered: root.warnBlink = !root.warnBlink
+        onRunningChanged: if(!running) root.warnBlink = false
+    }
+
+    property string settingsFocus: ""   // key of the setting being edited, "" when the menu is closed
     property string userColor: ""
     property string white_color: "#FFFFFF"
     property string primary_color: "#FFFFFF" //#FFBF00 for amber
@@ -261,7 +279,7 @@ Item {
             height: 37
             z:2
             x: 80; y: 5
-            visible: root.brake
+            visible: root.brake || root.handbrake
         }
         Image{
             source: './img/seatbelt_warning.png'
@@ -367,7 +385,7 @@ Item {
         height: 21
         x: 481; y: 407
         source: if(!root.sidelight) './img/lite_mph.png'; else './img/Dark_mph.png'
-        visible: root.speedunits === 1 
+        visible: root.speedunits !== 0
     }
     Image{
         id: kmh_label
@@ -381,12 +399,8 @@ Item {
     }    
      Text {
         id: odometer_display_val
-        text: if (root.speedunits === 0)
-                  (root.odometer/.62).toFixed(0)
-              else if (root.speedunits === 1)
-                  root.odometer.toFixed(0)
-              else
-                  root.odometer.toFixed(0)
+        // AgeSolo.qml already hands this over in km (KMH) or miles (MPH)
+        text: root.odometer.toFixed(0)
         font.pixelSize: 18
         horizontalAlignment: Text.AlignRight
         font.family: digital7monoitalic.name
@@ -467,7 +481,7 @@ Item {
             width: 28
             source:  './img/warninglightdim.png'
         }
-        visible: if(root.watertemp < root.waterhigh) true; else false
+        visible: !root.waterHot || root.focusWaterLamp
     }
     Item{
         id: watertemp_warning_lit
@@ -478,7 +492,8 @@ Item {
             width: 63
             source:'./img/warninglightlit.png'
         }
-        visible: if(root.watertemp >= root.waterhigh) true; else false
+        visible: root.waterHot || root.focusWaterLamp
+        opacity: root.focusWaterLamp ? root.focusPulse : 1
     }
     Item {
         id: tachometer_back
@@ -655,15 +670,21 @@ Item {
         height: 36
         x: 628; y: 335
         z: 2
-        color: if (!root.sidelight)
+        color: if (root.oiltempWarn)
+                   root.warning_red
+               else if (!root.sidelight)
                    root.daylight_lcd_color
                else
                    root.night_light_color
+        opacity: root.oiltempWarn && root.warnBlink ? 0.25 : 1
         text: if(root.oiltempunits !== 1)((((root.oiltemp.toFixed(0))*9)/5)+32).toFixed(0)+"F"; else root.oiltemp.toFixed(0) + "C"
         horizontalAlignment: Text.AlignRight
+        visible: root.oiltempshow === 1
     }
     DropShadow{
         z:2
+        opacity: root.oiltempWarn && root.warnBlink ? 0.25 : 1
+        visible: root.oiltempshow === 1     // the shadow effect draws its source too, so it must be hidden with it
         anchors.fill: oiltemp_display_val
         source: oiltemp_display_val
         verticalOffset: 3
@@ -686,17 +707,19 @@ Item {
         height: 36
         x: 628; y: 285
         z: 2
-        color: if (!root.sidelight)
+        color: if (root.oilpressureWarn)
+                   root.warning_red
+               else if (!root.sidelight)
                    root.daylight_lcd_color
                else
                    root.night_light_color
-        visible: if (root.oilpressurehigh === 0)
-                     false
-                 else
-                     true
+        opacity: root.oilpressureWarn && root.warnBlink ? 0.25 : 1
+        visible: root.oilpressureshow === 1
     }
     DropShadow{
         z:2
+        opacity: root.oilpressureWarn && root.warnBlink ? 0.25 : 1
+        visible: root.oilpressureshow === 1
         anchors.fill: oilpressure_display_val
         source: oilpressure_display_val
         verticalOffset: 3
@@ -706,6 +729,7 @@ Item {
     }
     Image{
         id: oilpressure_label
+        visible: root.oilpressureshow === 1
         x: 738; y: 292
         z:3
         width: 45
@@ -714,6 +738,7 @@ Item {
     }
     Image{
         id: oiltemp_label
+        visible: root.oiltempshow === 1
         x: 738; y: 341
         z: 3
         width: 42
@@ -736,13 +761,11 @@ Item {
                    root.daylight_lcd_color
                else
                    root.night_light_color
-        visible: if (root.oilpressurehigh === 0)
-                     false
-                 else
-                     true
+        visible: root.batteryshow === 1
     }
     DropShadow{
         z:2
+        visible: root.batteryshow === 1
         anchors.fill: battery_display_val
         source: battery_display_val
         verticalOffset: 3
@@ -752,6 +775,7 @@ Item {
     }
     Image{
         id: volts_label
+        visible: root.batteryshow === 1
         x: 738; y: 399
         z:3
         width: 39
@@ -823,6 +847,7 @@ Item {
                 else{
                     parent.opacity = 0
                 } 
+                onRunningChanged: if(!running) parent.opacity = 1   // otherwise it can stop on the "off" half and stay hidden
             }
     }
     
@@ -839,4 +864,79 @@ Item {
         source: if(!root.rightindicator) "./img/dim_blinker.png";else "./img/lit_blinker.png"
     }
     
+    /* ########################################################################## */
+    /* Settings focus: marks what the settings menu is editing                    */
+    /* ########################################################################## */
+    // settingsFocus is the key of the selected menu row ("waterhigh", "rpmlimit", ...)
+    // or "" when the menu is closed / browsing groups.
+    //   readouts  -> pulsing outline around them
+    //   rpmlimit  -> the three shift lights pulse
+    //   waterhigh -> the water warning lamp pulses
+    readonly property int focusSpot: {
+        var k = root.settingsFocus
+        if (k === "oilpressureshow" || k === "oilpressureunits" || k === "oilpressurelow") return 0
+        if (k === "oiltempshow" || k === "oiltempunits" || k === "oiltemphigh") return 1
+        if (k === "batteryshow") return 2
+        if (k === "fuellow") return 3
+        if (k === "speedunits") return 4
+        return -1
+    }
+    readonly property bool focusShiftLight: root.settingsFocus === "rpmlimit"
+    readonly property bool focusWaterLamp: root.settingsFocus === "waterhigh"
+    property real focusPulse: 1
+
+    SequentialAnimation {
+        running: root.focusSpot >= 0 || root.focusShiftLight || root.focusWaterLamp
+        loops: Animation.Infinite
+        onRunningChanged: if (!running) root.focusPulse = 1
+        NumberAnimation { target: root; property: "focusPulse"; to: 0.3; duration: 500; easing.type: Easing.InOutSine }
+        NumberAnimation { target: root; property: "focusPulse"; to: 1;   duration: 500; easing.type: Easing.InOutSine }
+    }
+
+    Rectangle {
+        id: settings_focus_box
+        // x, y, width, height: oil pressure, oil temp, battery, fuel, speed
+        readonly property var spots: [
+            [622, 280, 168, 48],
+            [622, 329, 168, 48],
+            [622, 376, 168, 44],
+            [572, 416, 216, 44],
+            [323, 362, 214, 92]
+        ]
+        property int spot: 0
+        Connections {
+            target: root
+            onFocusSpotChanged: if (root.focusSpot >= 0) settings_focus_box.spot = root.focusSpot   // keep the last spot while fading out
+        }
+        x: spots[spot][0]
+        y: spots[spot][1]
+        width: spots[spot][2]
+        height: spots[spot][3]
+        radius: 6
+        z: 30
+        color: "transparent"
+        border.width: 8
+        border.color: "#000000"
+        opacity: root.focusSpot >= 0 ? root.focusPulse : 0
+        visible: opacity > 0
+        Rectangle {
+            anchors.fill: parent
+            anchors.margins: 2
+            radius: 4
+            color: "transparent"
+            border.width: 4
+            border.color: "#ffd400"
+        }
+    }
+
+    Item {
+        id: settings_focus_shift_lights
+        z: 3
+        x: 326; y: 176
+        opacity: root.focusPulse
+        visible: root.focusShiftLight
+        Image { x: 0;   y: 0; height: 19; width: 46; source: './img/ShiftLightLit.png' }
+        Image { x: 51;  y: 0; height: 19; width: 46; source: './img/ShiftLightLit.png' }
+        Image { x: 102; y: 0; height: 19; width: 46; source: './img/ShiftLightLit.png' }
+    }
 } //End AgeSolo
