@@ -43,44 +43,33 @@ Item {
     // number: min / max / step / wrap / decimals     enum: options[] by stored value
     // ------------------------------------------------------------------
     property var schema: [
+        // Red / Green / Blue tint the settings background
         { name: "Display", rows: [
             { key: "red",            label: "Red",         type: "number", min: 0, max: 255, step: 1, wrap: true },
             { key: "green",          label: "Green",       type: "number", min: 0, max: 255, step: 1, wrap: true },
-            { key: "blue",           label: "Blue",        type: "number", min: 0, max: 255, step: 1, wrap: true },
-            { key: "night_time_hue", label: "Nightlight",  type: "number", min: 0, max: 1, step: 0.05, decimals: 2 } ] },
+            { key: "blue",           label: "Blue",        type: "number", min: 0, max: 255, step: 1, wrap: true } ] },
 
         { name: "Drive", rows: [
-            { key: "speedunits",     label: "Speed units", type: "enum",   options: ["KMH", "MPH", "BOTH"] },
-            { key: "rpmlimit",       label: "Rpm limit",   type: "number", min: 0, max: 9000, step: 100, wrap: true },
-            { key: "shiftvalue",     label: "Shift rpm",   type: "number", min: 0, max: 9000, step: 100, wrap: true },
-            { key: "rpmdamping",     label: "Rpm damping", type: "number", min: 0, max: 10, step: 1, wrap: true } ] },
+            { key: "speedunits",     label: "Speed units", type: "enum",   options: ["KMH", "MPH"] },
+            { key: "rpmlimit",       label: "Rpm limit",   type: "number", min: 0, max: 9000, step: 100, wrap: true } ] },
 
+        // High is Celsius and lights the water warning lamp, 0 = no warning
         { name: "Coolant", rows: [
-            { key: "waterunits",     label: "Units", type: "enum",   options: ["F", "C"] },
-            { key: "waterhigh",      label: "High",  type: "number", min: 0, step: 1 },
-            { key: "waterlow",       label: "Low",   type: "number", min: 0, step: 1 } ] },
+            { key: "waterhigh",      label: "High",  type: "number", min: 0, step: 1 } ] },
 
         { name: "Fuel", rows: [
-            { key: "fuelhigh",       label: "High",  type: "number", min: 0, step: 1 },
             { key: "fuellow",        label: "Low",   type: "number", min: 0, step: 1 } ] },
 
         { name: "Oil temp", rows: [
-            { key: "oiltempunits",   label: "Units", type: "enum",   options: ["F", "C"] },
-            { key: "oiltemphigh",    label: "High",  type: "number", min: 0, step: 1 },
-            { key: "oiltemplow",     label: "Low",   type: "number", min: 0, step: 1 } ] },
+            { key: "oiltempshow",    label: "Show",  type: "enum",   options: ["OFF", "ON"] },
+            { key: "oiltempunits",   label: "Units", type: "enum",   options: ["F", "C"] } ] },
 
         { name: "Oil press", rows: [
-            { key: "oilpressureunits", label: "Units", type: "enum",   options: ["PSI", "BAR"] },
-            { key: "oilpressurehigh",  label: "High",  type: "number", min: 0, step: 1 },
-            { key: "oilpressurelow",   label: "Low",   type: "number", min: 0, step: 1 } ] },
+            { key: "oilpressureshow",  label: "Show",  type: "enum",   options: ["OFF", "ON"] },
+            { key: "oilpressureunits", label: "Units", type: "enum",   options: ["PSI", "BAR"] } ] },
 
         { name: "Battery", rows: [
-            { key: "batteryhigh",    label: "High",  type: "number", min: 0, step: 0.1, decimals: 1 },
-            { key: "batterylow",     label: "Low",   type: "number", min: 0, step: 0.1, decimals: 1 } ] },
-
-        { name: "AFR", rows: [
-            { key: "afrhigh",        label: "High",  type: "number", min: 0, step: 0.1, decimals: 1 },
-            { key: "afrlow",         label: "Low",   type: "number", min: 0, step: 0.1, decimals: 1 } ] },
+            { key: "batteryshow",    label: "Show",  type: "enum",   options: ["OFF", "ON"] } ] },
 
         { name: "Save & Exit", action: true, glyph: '○', rows: [] }
     ]
@@ -277,8 +266,6 @@ Item {
                     menu.height - th.footH - 8 - height)
         Behavior on y { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
 
-        // opacity: !menu.open ? 0 : (menu.level === 1 ? 1.0 : 0.2)
-        Behavior on opacity { NumberAnimation { duration: 160 } }
         Rectangle {                                 // solid backing: nothing shows through
             x: -6; y: -6
             width: fly.width + 12

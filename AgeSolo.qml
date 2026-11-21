@@ -18,11 +18,11 @@ Item{
     property bool udp_down:udp_message&0x02
     property bool udp_left:udp_message&0x04
     property bool udp_right:udp_message&0x08
-    property int odometer:if(speedunits==0)rpmtest.odometer0data;else rpmtest.odometer0data*0.62
-    property int tripmeter:if(speedunits==0)rpmtest.tripmileage0data;else rpmtest.tripmileage0data*0.62
+    property int odometer:if(speedunits==0)rpmtest.odometer0data;else rpmtest.odometer0data*0.621371
+    property int tripmeter:if(speedunits==0)rpmtest.tripmileage0data;else rpmtest.tripmileage0data*0.621371
     property real rpm:rpmtest.rpmdata
     property real speed:rpmtest.speeddata
-    property int speedunits:0
+    property int speedunits:1             // 0 = KMH, 1 = MPH
     property real watertemp:rpmtest.watertempdata
     property real fuel:rpmtest.fueldata
     property real o2:rpmtest.o2data
@@ -37,7 +37,7 @@ Item{
 
     property real gearpos:rpmtest.geardata
 
-    property real rpmlimit:4000
+    property real rpmlimit:8000
     property real shiftvalue:0
     property string colorscheme: "green"
     property int red: 255
@@ -54,19 +54,25 @@ Item{
     property real afrhigh:0
     property real afrunits:0
 
+    // Defaults for a fresh install (no JSON and no old .txt to migrate)
     property int waterlow:0
-    property int waterhigh:0
+    property int waterhigh:105            // Celsius; lights the water warning lamp, 0 = no warning
     property int waterunits:0
-    property int fuellow:0
+    property int fuellow:10
     property int fuelhigh:0
     property int fuelunits:1
     property int oiltemplow:0
     property int oiltemphigh:0
-    property int oiltempunits:0
+    property int oiltempunits:1           // 0 = F, 1 = C
     property int oilpressurelow:0
     property int oilpressurehigh:0
-    property int oilpressureunits:0
+    property int oilpressureunits:0       // 0 = PSI, 1 = BAR
     property real night_time_hue:0
+
+    // Optional readouts on the right-hand panel
+    property int oiltempshow:1
+    property int oilpressureshow:0
+    property int batteryshow:1
 
     property bool settings_on_off:false
     property bool menu_on_off:rpmtest.settings_on_offdata&0x02
@@ -90,13 +96,27 @@ Item{
 
     FileIO {
         id: config_json
+        source: "/opt/IC7/screen_configs/AgeSolo_config.json"
+        onError: console.log(msg)
+    }
+
+    // Earlier versions used this path without the leading slash. Read once so a
+    // JSON saved relative to the binary's working directory is still picked up.
+    FileIO {
+        id: config_json_rel
         source: "opt/IC7/screen_configs/AgeSolo_config.json"
         onError: console.log(msg)
     }
 
-    // Old positional file, read once for migration only
+    // Old positional files, read once for migration only.
+    // v5+ firmware keeps them in /opt/IC7, v4 kept them in /opt/Garw_IC7.
     FileIO {
         id: config_file
+        source: "/opt/IC7/screen_configs/AgeSolo_config.txt"
+        onError: console.log(msg)
+    }
+    FileIO {
+        id: config_file_v4
         source: "/opt/Garw_IC7/screen_configs/AgeSolo_config.txt"
         onError: console.log(msg)
     }
@@ -107,17 +127,27 @@ Item{
     readonly property var schema: [
         { key: "colorscheme",      type: "string" },
         { key: "red" },  { key: "green" },  { key: "blue" },
-        { key: "waterlow" },       { key: "waterhigh" },       { key: "waterunits" },
-        { key: "fuellow" },        { key: "fuelhigh" },        { key: "fuelunits" },
-        { key: "oiltemplow" },     { key: "oiltemphigh" },     { key: "oiltempunits" },
-        { key: "oilpressurelow" }, { key: "oilpressurehigh" }, { key: "oilpressureunits" },
-        { key: "speedunits" },     { key: "rpmlimit" },        { key: "shiftvalue" },
-        { key: "night_time_hue" }, { key: "rpmdamping" },
-        // no gauge for these on this dial
-        { key: "batterylow",  disabled: true },
-        { key: "batteryhigh", disabled: true },
-        { key: "afrlow",      disabled: true },
-        { key: "afrhigh",     disabled: true }
+        { key: "waterhigh" },      { key: "fuellow" },
+        { key: "oiltempshow" },    { key: "oiltempunits" },
+        { key: "oilpressureshow" },{ key: "oilpressureunits" },
+        { key: "batteryshow" },
+        { key: "speedunits" },     { key: "rpmlimit" },
+        // the AgeSolo dial has nothing that uses these
+        { key: "waterlow",         disabled: true },
+        { key: "waterunits",       disabled: true },
+        { key: "fuelhigh",         disabled: true },
+        { key: "fuelunits",        disabled: true },
+        { key: "oiltemplow",       disabled: true },
+        { key: "oiltemphigh",      disabled: true },
+        { key: "oilpressurelow",   disabled: true },
+        { key: "oilpressurehigh",  disabled: true },
+        { key: "shiftvalue",       disabled: true },
+        { key: "night_time_hue",   disabled: true },
+        { key: "rpmdamping",       disabled: true },
+        { key: "batterylow",       disabled: true },
+        { key: "batteryhigh",      disabled: true },
+        { key: "afrlow",           disabled: true },
+        { key: "afrhigh",          disabled: true }
     ]
 
     // What the menu should list and what gets persisted
@@ -162,9 +192,22 @@ Item{
         else if (!isNaN(Number(v))) root[key] = Number(v)
     }
 
-    // returns "json", "legacy", "none" or "error"
+    // Oil pressure and battery voltage used to be shown only when the oil pressure
+    // High value was above zero. Carry that over to the new Show settings.
+    function showFromOldHigh(oph) {
+        var on = (!isNaN(Number(oph)) && Number(oph) !== 0) ? 1 : 0
+        root.oilpressureshow = on
+        root.batteryshow = on
+    }
+
+    // The dial has no "both" speed mode; an old 2 behaved as MPH
+    function fixSpeedUnits() { if (root.speedunits !== 0) root.speedunits = 1 }
+
+    // returns "json", "json-moved", "legacy", "none" or "error"
     function loadConfig() {
+        var moved = false
         var lines = readLines(config_json, 300)
+        if (lines.length === 0) { lines = readLines(config_json_rel, 300); moved = lines.length > 0 }
         if (lines.length > 0) {
             try {
                 var obj = JSON.parse(lines.join("\n"))
@@ -172,16 +215,23 @@ Item{
                     var k = editableSettings[i].key
                     if (obj.hasOwnProperty(k)) applyConfigValue(k, obj[k])
                 }
-                return "json"
+                // JSON written before the Show settings existed
+                if (!obj.hasOwnProperty("oilpressureshow") && obj.hasOwnProperty("oilpressurehigh"))
+                    showFromOldHigh(obj.oilpressurehigh)
+                fixSpeedUnits()
+                return moved ? "json-moved" : "json"
             } catch (e) {
                 console.log("config JSON invalid, keeping defaults and NOT overwriting: " + e)
                 return "error"
             }
         }
         var old = readLines(config_file, 26)
+        if (old.length === 0) old = readLines(config_file_v4, 26)
         if (old.length > 0) {
             for (var j = 0; j < old.length && j < legacyKeys.length; j++)
                 if (legacyKeys[j]) applyConfigValue(legacyKeys[j], old[j])
+            showFromOldHigh(old[legacyKeys.indexOf("oilpressurehigh")])
+            fixSpeedUnits()
             return "legacy"
         }
         return "none"
@@ -201,7 +251,7 @@ Item{
     Component.onCompleted: {
         try { rpmtest.DISABLE_WARNING_OVERLAY = "YES_WARNINGS_HANDLED_LOCALLY" } catch (e) {}
         var r = loadConfig()
-        if (r === "legacy" || r === "none") save_settings()   // migrate / seed defaults
+        if (r === "legacy" || r === "none" || r === "json-moved") save_settings()   // migrate / seed defaults
     }
 
     ///////////////////////////////
@@ -305,7 +355,7 @@ Item{
         Behavior on scale { NumberAnimation { duration: 500 } }
     AgeSoloDisplay  {
         id: dial
-        odometer:root.odometer
+        odometer:root.odometer/10      // raw value is in tenths; dial wants 6 digits
         tripmeter:root.tripmeter
         shiftvalue:root.shiftvalue
         rpm:root.rpm
@@ -332,12 +382,15 @@ Item{
         oiltemphigh:root.oiltemphigh
         oiltemplow: root.oiltemplow
         oiltempunits: root.oiltempunits
+        oiltempshow: root.oiltempshow
+        oilpressureshow: root.oilpressureshow
+        batteryshow: root.batteryshow
         batteryvoltage: root.batteryvoltage
         userColor: Qt.rgba(root.red/255, root.green/255, root.blue/255, 1)
         gearpos: root.gearpos
         udp_message:root.udp_message
         inputs: root.inputs
-        settingsFocus: menu.focusKey     // add `property string settingsFocus: ""` to AgeSolo
+        settingsFocus: menu.focusKey
         opacity: 1
         width: 800
         height: 480

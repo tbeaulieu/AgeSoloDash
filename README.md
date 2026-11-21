@@ -28,11 +28,14 @@ TO DO:
 
 - Added Shift indicator and improved gauge edge legibility.
 
+## Settings
+
+Oil temperature, oil pressure and battery voltage can each be hidden with their Show row in the settings menu. Coolant High (Celsius) lights the water warning lamp; 0 turns it off.
+
+Settings are saved as JSON in `/opt/IC7/screen_configs/AgeSolo_config.json`. An existing `AgeSolo_config.txt` is imported once on first run.
+
 # Installation notes:
 
-1) Obtain the GARW dash installer here: https://github.com/dustinsterk/GARWDashUploader
-2) You will need to unzip this dashboard file, rename the folder to "AgeSolo_Main" (Don't use the quotes), and recompress it. (I know, it's a pain)
-3) Upload the dash via the uploader while connected to the GAWR Wifi.
-4) Follow the rest of the aforementioned instructions.
+1) Install via GARW Genie at:  https://github.com/dustinsterk/GARWGenie
 
 There are some prebuilt releases for the uploader, check with the Discord Channel here: [https://discord.gg/36kybUTW](https://discord.gg/bmKFrt8XP6)
